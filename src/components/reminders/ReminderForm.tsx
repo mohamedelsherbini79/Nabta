@@ -19,7 +19,7 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
   const [type, setType] = useState<(typeof TYPE_OPTIONS)[number]>("APPOINTMENT");
   const [scheduledFor, setScheduledFor] = useState("");
   const [recurrenceRule, setRecurrenceRule] = useState<(typeof RECURRENCE_OPTIONS)[number]>("NONE");
-  const [channel, setChannel] = useState<(typeof CHANNEL_OPTIONS)[number]>("PUSH");
+  const [channel, setChannel] = useState<(typeof CHANNEL_OPTIONS)[number]>("SMS");
   const [locationLabel, setLocationLabel] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

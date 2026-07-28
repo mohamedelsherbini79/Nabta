@@ -330,7 +330,7 @@ model Reminder {
   type              String // MEDICATION | LOCATION | VACCINATION | PRESCRIPTION_RENEWAL | APPOINTMENT | HEAT
   relatedEntityType String?
   relatedEntityId   String?
-  channel           String              @default("PUSH") // PUSH | SMS | VOICE
+  channel           String              @default("SMS") // PUSH | SMS | VOICE
   voiceAssetId      String?
   voiceAsset        VoiceReminderAsset? @relation(fields: [voiceAssetId], references: [id])
   locationTrigger   Json?

@@ -202,7 +202,7 @@ export type CycleEntryInput = z.infer<typeof cycleEntrySchema>;
 export const reminderSchema = z.object({
   label: z.string().trim().min(1).max(150),
   type: z.enum(["MEDICATION", "LOCATION", "VACCINATION", "PRESCRIPTION_RENEWAL", "APPOINTMENT", "HEAT"]),
-  channel: z.enum(["PUSH", "SMS", "VOICE"]).default("PUSH"),
+  channel: z.enum(["PUSH", "SMS", "VOICE"]).default("SMS"),
   scheduledFor: z.coerce.date(),
   recurrenceRule: z.enum(["NONE", "DAILY", "WEEKLY", "MONTHLY"]).optional().nullable(),
   locationLabel: z.string().trim().max(100).optional().nullable(),
