@@ -1,0 +1,705 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════════════
+// Enums
+// ═══════════════════════════════════════════════════════════
+
+enum Role {
+  PATIENT
+  DOCTOR
+  PHARMACIST
+  ADMIN
+}
+
+enum FamilyRelationship {
+  SELF
+  CHILD
+  PARENT
+  SPOUSE
+  OTHER
+}
+
+enum DelegateScope {
+  FULL
+  MEDICATION_ONLY
+  VIEW_ONLY
+}
+
+enum ConversationKind {
+  PATIENT_AI
+  PHARMACIST
+  SUPPORT
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum VitalsType {
+  BLOOD_PRESSURE
+  GLUCOSE
+  TEMPERATURE
+  WEIGHT
+  SPO2
+  HEART_RATE
+}
+
+// ═══════════════════════════════════════════════════════════
+// A. Identity & Access
+// ═══════════════════════════════════════════════════════════
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  name            String?
+  phone           String?   @unique
+  phoneVerifiedAt DateTime?
+  role            Role      @default(PATIENT)
+  specialty       String? // set for role: DOCTOR, e.g. "Cardiology"
+  preferredLocale String    @default("ar")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  conversations        Conversation[]
+  headOfFamilyGroups   FamilyGroup[]         @relation("FamilyHead")
+  delegateGrants       FamilyDelegate[]      @relation("DelegateAccess")
+  auditLogs            AuditLog[]
+  otpChallenges        OtpChallenge[]
+  communityMemberships CommunityMembership[]
+  communityPosts       CommunityPost[]
+  communityComments    CommunityComment[]
+  notificationReceipts NotificationReceipt[]
+}
+
+model FamilyGroup {
+  id         String   @id @default(cuid())
+  headUserId String
+  headUser   User     @relation("FamilyHead", fields: [headUserId], references: [id])
+  name       String?
+  createdAt  DateTime @default(now())
+
+  profiles  PatientProfile[]
+  delegates FamilyDelegate[]
+
+  @@index([headUserId])
+}
+
+// The medical "subject" — a real logged-in user (relationship SELF) or a
+// login-less dependent (child, elderly parent) managed under Family Mode.
+model PatientProfile {
+  id                    String             @id @default(cuid())
+  familyGroupId         String
+  familyGroup           FamilyGroup        @relation(fields: [familyGroupId], references: [id], onDelete: Cascade)
+  userId                String?            @unique
+  relationship          FamilyRelationship @default(SELF)
+  displayName           String
+  dob                   DateTime?
+  sex                   String?
+  bloodType             String?
+  heightCm              Float?
+  weightKg              Float?
+  chronicConditions     String[]
+  allergies             String[]
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  medications         Medication[]
+  reminders           Reminder[]
+  vitals              VitalsRecord[]
+  symptomLogs         SymptomLog[]
+  vaccinations        VaccinationRecord[]
+  cycleEntries        MenstrualCycleEntry[]
+  selfAssessments     SelfAssessment[]
+  healthScores        HealthScore[]
+  monthlyReports      MonthlyReport[]
+  qrShareLinks        QrShareLink[]
+  expenses            ExpenseRecord[]
+  consultations       Consultation[]
+  wearableConns       WearableConnection[]
+  voiceReminderAssets VoiceReminderAsset[]
+  loyaltyPoints       LoyaltyPointsLedger[]
+  prescriptions       Prescription[]
+  pharmacyOrders      PharmacyOrder[]
+
+  @@index([familyGroupId])
+}
+
+// A second real User granted login access into a FamilyGroup (distinct from
+// a dependent PatientProfile, which has no login of its own).
+model FamilyDelegate {
+  id             String        @id @default(cuid())
+  familyGroupId  String
+  familyGroup    FamilyGroup   @relation(fields: [familyGroupId], references: [id], onDelete: Cascade)
+  delegateUserId String
+  delegateUser   User          @relation("DelegateAccess", fields: [delegateUserId], references: [id])
+  scope          DelegateScope @default(FULL)
+  invitedAt      DateTime      @default(now())
+  acceptedAt     DateTime?
+  expiresAt      DateTime?
+
+  @@unique([familyGroupId, delegateUserId])
+}
+
+model OtpChallenge {
+  id         String    @id @default(cuid())
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String
+  codeHash   String
+  purpose    String    @default("SIGNUP") // SIGNUP | LOGIN | PHONE_VERIFY
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actorUser   User?    @relation(fields: [actorUserId], references: [id])
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+}
+
+// Per-country rollout/content config (emergency number, currency, feature
+// flags) — a content dimension, not a data-isolation/tenancy dimension.
+model CountryConfig {
+  id                   String  @id @default(cuid())
+  countryCode          String  @unique // AE, QA, OM, SA, EG
+  name                 String
+  emergencyNumber      String
+  currency             String
+  phaseEnabled         Boolean @default(false)
+  hajjModeAvailable    Boolean @default(false)
+  ramadanModeAvailable Boolean @default(false)
+}
+
+// ═══════════════════════════════════════════════════════════
+// Existing AI chat (kind discriminator added so Pharmacist Chat /
+// future support chat reuse this instead of new tables)
+// ═══════════════════════════════════════════════════════════
+
+model Conversation {
+  id        String           @id @default(cuid())
+  title     String           @default("New conversation")
+  kind      ConversationKind @default(PATIENT_AI)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String       @db.Text
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+// ═══════════════════════════════════════════════════════════
+// B. Medication, Reminders & Drug Safety
+// ═══════════════════════════════════════════════════════════
+
+model DrugCatalog {
+  id                String   @id @default(cuid())
+  tradeName         String
+  genericName       String
+  activeIngredient  String
+  dosageForms       String[]
+  commonSideEffects String[]
+  contraindications String[]
+  heatSensitive     Boolean  @default(false)
+  source            String   @default("SEED") // SEED | IMPORTED
+  createdAt         DateTime @default(now())
+
+  medications        Medication[]
+  interactionsAsA    DrugInteraction[]   @relation("InteractionA")
+  interactionsAsB    DrugInteraction[]   @relation("InteractionB")
+  prescriptionItems  PrescriptionItem[]
+  pharmacyOrderItems PharmacyOrderItem[]
+
+  @@index([genericName])
+}
+
+model DrugInteraction {
+  id          String      @id @default(cuid())
+  drugAId     String
+  drugA       DrugCatalog @relation("InteractionA", fields: [drugAId], references: [id], onDelete: Cascade)
+  drugBId     String
+  drugB       DrugCatalog @relation("InteractionB", fields: [drugBId], references: [id], onDelete: Cascade)
+  severity    String // MILD | MODERATE | SEVERE
+  description String
+
+  @@unique([drugAId, drugBId])
+}
+
+model Medication {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  drugCatalogId    String?
+  drugCatalog      DrugCatalog?   @relation(fields: [drugCatalogId], references: [id])
+  customName       String?
+  dosageForm       String?
+  strength         String?
+  addedVia         String         @default("MANUAL") // MANUAL | BARCODE | QR
+  startDate        DateTime       @default(now())
+  endDate          DateTime?
+  createdAt        DateTime       @default(now())
+
+  schedules MedicationSchedule[]
+  stock     MedicationStock?
+
+  @@index([patientProfileId])
+}
+
+model MedicationSchedule {
+  id           String     @id @default(cuid())
+  medicationId String
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  timesOfDay   String[]
+  daysOfWeek   Int[]
+  timezone     String
+  ramadanShift Boolean    @default(false)
+  active       Boolean    @default(true)
+
+  doses Dose[]
+
+  @@index([medicationId])
+}
+
+// Unified dose record — doubles as the compliance/adherence log
+// (status transitions ARE the audit trail; no separate MedicationLog).
+model Dose {
+  id                   String             @id @default(cuid())
+  medicationScheduleId String
+  schedule             MedicationSchedule @relation(fields: [medicationScheduleId], references: [id], onDelete: Cascade)
+  scheduledFor         DateTime
+  status               String             @default("PENDING") // PENDING | TAKEN | MISSED | SKIPPED
+  actedAt              DateTime?
+
+  @@index([medicationScheduleId, scheduledFor])
+}
+
+model MedicationStock {
+  id                String     @id @default(cuid())
+  medicationId      String     @unique
+  medication        Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  quantityOnHand    Float
+  unit              String
+  lowStockThreshold Float
+  lastRestockedAt   DateTime?
+}
+
+// Unified reminder — covers medication / location / vaccination /
+// prescription-renewal / appointment / heat-alert reminders alike.
+model Reminder {
+  id                String              @id @default(cuid())
+  patientProfileId  String
+  patientProfile    PatientProfile      @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  label             String
+  type              String // MEDICATION | LOCATION | VACCINATION | PRESCRIPTION_RENEWAL | APPOINTMENT | HEAT
+  relatedEntityType String?
+  relatedEntityId   String?
+  channel           String              @default("PUSH") // PUSH | SMS | VOICE
+  voiceAssetId      String?
+  voiceAsset        VoiceReminderAsset? @relation(fields: [voiceAssetId], references: [id])
+  locationTrigger   Json?
+  scheduledFor      DateTime?
+  recurrenceRule    String?
+  active            Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  lastSentAt        DateTime?
+  lastDeliveryStatus String? // SENT | FAILED | SKIPPED_NO_PHONE | SKIPPED_UNSUPPORTED
+
+  @@index([patientProfileId])
+}
+
+model VoiceReminderAsset {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  storageKey       String
+  durationSec      Int
+  createdAt        DateTime       @default(now())
+
+  reminders Reminder[]
+
+  @@index([patientProfileId])
+}
+
+// ═══════════════════════════════════════════════════════════
+// C. Tracking & Vitals
+// ═══════════════════════════════════════════════════════════
+
+model SymptomLog {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  loggedAt         DateTime       @default(now())
+  severity         Int
+  tags             String[]
+  note             String?
+
+  @@index([patientProfileId, loggedAt])
+}
+
+model VitalsRecord {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  type             VitalsType
+  valueJson        Json
+  source           String         @default("MANUAL") // MANUAL | BLUETOOTH | WEARABLE
+  recordedAt       DateTime       @default(now())
+
+  @@index([patientProfileId, type, recordedAt])
+}
+
+model MenstrualCycleEntry {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  startDate        DateTime
+  endDate          DateTime?
+  flow             String?
+  symptoms         String[]
+  createdAt        DateTime       @default(now())
+
+  @@index([patientProfileId, startDate])
+}
+
+model VaccinationRecord {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  vaccineName      String
+  doseNumber       Int            @default(1)
+  administeredAt   DateTime?
+  dueAt            DateTime?
+  status           String         @default("DUE") // DUE | ADMINISTERED | OVERDUE
+
+  @@index([patientProfileId])
+}
+
+model WearableConnection {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  provider         String // FITBIT | APPLE_HEALTH | GOOGLE_FIT | SAMSUNG_HEALTH
+  accessTokenEnc   String?
+  refreshTokenEnc  String?
+  status           String         @default("DISCONNECTED") // CONNECTED | DISCONNECTED | ERROR
+  lastSyncedAt     DateTime?
+  createdAt        DateTime       @default(now())
+
+  samples WearableSample[]
+
+  @@unique([patientProfileId, provider])
+}
+
+model WearableSample {
+  id                   String             @id @default(cuid())
+  wearableConnectionId String
+  wearableConnection   WearableConnection @relation(fields: [wearableConnectionId], references: [id], onDelete: Cascade)
+  type                 String // SLEEP | HEART_RATE | STEPS | SPO2
+  value                Json
+  recordedAt           DateTime
+
+  @@index([wearableConnectionId, type, recordedAt])
+}
+
+// ═══════════════════════════════════════════════════════════
+// D. Health Profile & Reports
+// ═══════════════════════════════════════════════════════════
+
+model SelfAssessment {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  completedAt      DateTime       @default(now())
+  heightCm         Float?
+  weightKg         Float?
+  bmi              Float?
+  lifestyle        Json?
+  goals            Json?
+  version          Int            @default(1)
+
+  @@index([patientProfileId])
+}
+
+// Derived/computed snapshot — never a duplicate store of its inputs.
+model HealthScore {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  computedAt       DateTime       @default(now())
+  score            Int
+  breakdown        Json // { adherence, assessment, vitals, activity }
+
+  @@index([patientProfileId, computedAt])
+}
+
+// Shared by monthly health reports AND monthly expense reports (reportType).
+model MonthlyReport {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  reportType       String         @default("HEALTH") // HEALTH | EXPENSE | COMBINED
+  periodStart      DateTime
+  periodEnd        DateTime
+  status           String         @default("GENERATING") // GENERATING | READY | FAILED
+  pdfStorageKey    String?
+  dataSnapshot     Json?
+  generatedAt      DateTime?
+  emailedAt        DateTime?
+  createdAt        DateTime       @default(now())
+
+  @@index([patientProfileId, periodStart])
+}
+
+// Shared by the Emergency QR Card and time-limited Doctor Share (purpose).
+model QrShareLink {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  token            String         @unique
+  purpose          String // EMERGENCY_CARD | DOCTOR_SHARE
+  scope            Json // { meds: true, allergies: true, vitals: false, ... }
+  createdByUserId  String
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  createdAt        DateTime       @default(now())
+
+  accesses QrShareAccessLog[]
+
+  @@index([patientProfileId])
+}
+
+model QrShareAccessLog {
+  id            String      @id @default(cuid())
+  qrShareLinkId String
+  qrShareLink   QrShareLink @relation(fields: [qrShareLinkId], references: [id], onDelete: Cascade)
+  accessedAt    DateTime    @default(now())
+  ipAddress     String?
+}
+
+// ═══════════════════════════════════════════════════════════
+// E. Finance & Loyalty
+// ═══════════════════════════════════════════════════════════
+
+model ExpenseRecord {
+  id                     String         @id @default(cuid())
+  patientProfileId       String
+  patientProfile         PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  category               String
+  amount                 Decimal
+  currency               String
+  incurredAt             DateTime       @default(now())
+  note                   String?
+  relatedPharmacyOrderId String?
+  relatedPharmacyOrder   PharmacyOrder? @relation(fields: [relatedPharmacyOrderId], references: [id])
+
+  @@index([patientProfileId, incurredAt])
+}
+
+// Append-only; balance = SUM(delta), never a mutable stored balance.
+model LoyaltyPointsLedger {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  delta            Int
+  reason           String
+  createdAt        DateTime       @default(now())
+
+  @@index([patientProfileId])
+}
+
+// ═══════════════════════════════════════════════════════════
+// F. Care, Consultation & Pharmacy
+// ═══════════════════════════════════════════════════════════
+
+model Consultation {
+  id                String         @id @default(cuid())
+  patientProfileId  String
+  patientProfile    PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  doctorUserId      String
+  scheduledFor      DateTime
+  status            String         @default("BOOKED") // BOOKED | COMPLETED | CANCELLED | NO_SHOW
+  videoRoomRef      String?
+  recordingConsent  Boolean        @default(false)
+  recordingAssetKey String?
+  createdAt         DateTime       @default(now())
+
+  prescriptions Prescription[]
+
+  @@index([patientProfileId])
+  @@index([doctorUserId])
+}
+
+model Prescription {
+  id               String         @id @default(cuid())
+  consultationId   String?
+  consultation     Consultation?  @relation(fields: [consultationId], references: [id])
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  doctorUserId     String
+  issuedAt         DateTime       @default(now())
+  status           String         @default("WRITTEN") // WRITTEN | SENT_TO_PHARMACY | RECEIVED | DISPENSED | EXPIRED
+  expiresAt        DateTime?
+
+  items          PrescriptionItem[]
+  pharmacyOrders PharmacyOrder[]
+
+  @@index([patientProfileId])
+}
+
+model PrescriptionItem {
+  id                 String       @id @default(cuid())
+  prescriptionId     String
+  prescription       Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  drugCatalogId      String?
+  drugCatalog        DrugCatalog? @relation(fields: [drugCatalogId], references: [id])
+  customDrugName     String?
+  dosageInstructions String
+  quantity           Int
+}
+
+model PharmacyOrder {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  prescriptionId   String?
+  prescription     Prescription?  @relation(fields: [prescriptionId], references: [id])
+  status           String         @default("CART") // CART|AWAITING_PAYMENT|PLACED|CONFIRMED|OUT_FOR_DELIVERY|DELIVERED|CANCELLED|PAYMENT_FAILED
+  paymentProvider  String? // gateway name, e.g. PAYTABS
+  paymentRef       String? // gateway transaction reference (e.g. PayTabs tran_ref)
+  deliveryAddress  Json?
+  createdAt        DateTime       @default(now())
+
+  items    PharmacyOrderItem[]
+  expenses ExpenseRecord[]
+
+  @@index([patientProfileId])
+}
+
+model PharmacyOrderItem {
+  id              String        @id @default(cuid())
+  pharmacyOrderId String
+  pharmacyOrder   PharmacyOrder @relation(fields: [pharmacyOrderId], references: [id], onDelete: Cascade)
+  drugCatalogId   String?
+  drugCatalog     DrugCatalog?  @relation(fields: [drugCatalogId], references: [id])
+  quantity        Int
+  unitPrice       Decimal
+}
+
+// Note: Pharmacist Chat and any future support chat deliberately reuse the
+// existing Conversation/Message models above via `kind`, not new tables.
+
+// ═══════════════════════════════════════════════════════════
+// G. Community
+// ═══════════════════════════════════════════════════════════
+
+model CommunityGroup {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  conditionTag String?
+  createdAt    DateTime @default(now())
+
+  memberships CommunityMembership[]
+  posts       CommunityPost[]
+}
+
+model CommunityMembership {
+  id       String         @id @default(cuid())
+  groupId  String
+  group    CommunityGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     String         @default("MEMBER") // MEMBER | MODERATOR
+  joinedAt DateTime       @default(now())
+
+  @@unique([groupId, userId])
+}
+
+model CommunityPost {
+  id        String         @id @default(cuid())
+  groupId   String
+  group     CommunityGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User           @relation(fields: [authorId], references: [id])
+  content   String         @db.Text
+  status    String         @default("VISIBLE") // VISIBLE | FLAGGED | REMOVED
+  createdAt DateTime       @default(now())
+
+  comments CommunityComment[]
+
+  @@index([groupId, createdAt])
+}
+
+model CommunityComment {
+  id        String        @id @default(cuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id])
+  content   String        @db.Text
+  status    String        @default("VISIBLE") // VISIBLE | FLAGGED | REMOVED
+  createdAt DateTime      @default(now())
+
+  @@index([postId])
+}
+
+// ═══════════════════════════════════════════════════════════
+// H. Admin / Ops
+// ═══════════════════════════════════════════════════════════
+
+model SystemNotification {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+
+  receipts NotificationReceipt[]
+}
+
+model NotificationReceipt {
+  id             String             @id @default(cuid())
+  notificationId String
+  notification   SystemNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt         DateTime?
+
+  @@unique([notificationId, userId])
+}
