@@ -7,10 +7,14 @@ tracking, monthly PDF reports, an emergency QR card, video consultations, e-pres
 patient community, and more — rolling out UAE → Qatar → Oman → Saudi Arabia → Egypt, in 6 languages
 (Arabic, English, Chinese, Hindi, Spanish, French).
 
-**Current state:** the AI chat feature is fully working end-to-end. Everything else described above
-exists as **schema + route skeleton + integration stubs** — see
-[Foundation vs. built features](#foundation-vs-built-features) below. Building out each module is
-future, phase-by-phase work.
+**Current state:** every module listed above is fully built and working end-to-end — AI patient
+chat, a separate AI pharmacist chat, medications, self-assessment, family mode, vitals/symptoms/
+cycle/vaccinations tracking, reminders (with real SMS/voice/email delivery), health reports,
+emergency QR card, expenses, video consultations with a dedicated doctor area, profile sharing,
+loyalty points, community, pharmacy with real checkout, a full admin/ops dashboard, and a
+mobile-first installable PWA experience. Payments, video, and messaging run against real third-party
+providers (PayTabs, Daily.co, Twilio, Resend) — see [Foundation vs. built features](#foundation-vs-built-features)
+below for what's real vs. still a dev stub.
 
 **This is a prototype/demo.** It does not store real patient records and is not built to
 HIPAA/GDPR-grade compliance — see [Security notes](#security-notes).
@@ -25,6 +29,10 @@ HIPAA/GDPR-grade compliance — see [Security notes](#security-notes).
 | Auth | Auth.js v5 (`next-auth@beta`), Credentials provider, JWT sessions, `bcryptjs` password hashing, role-based access (`PATIENT`/`DOCTOR`/`PHARMACIST`/`ADMIN`) |
 | AI | `@google/genai`, streaming responses from Gemini |
 | i18n | Lightweight custom context + JSON dictionaries (`src/i18n`), cookie-based locale, 6 languages |
+| Payments | PayTabs hosted-page checkout (pharmacy orders) |
+| Video | Daily.co (doctor consultations) |
+| Messaging | Twilio (SMS/voice reminders), Resend (transactional email) |
+| PWA | Native `manifest.ts`, a hand-rolled service worker (`public/sw.js`), installable + offline-capable |
 
 ## Setup
 
@@ -49,6 +57,11 @@ cp .env.example .env.local
 | `GEMINI_MODEL` | No | Defaults to `gemini-flash-latest` (Google's rolling alias for the current flash-tier model — avoids hardcoding a model ID that later gets deprecated for new API keys). |
 | `AUTH_SECRET` | Yes | Random secret for session signing. Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`. |
 | `ENCRYPTION_KEY` | Yes | 32-byte base64 key for at-rest encryption of sensitive columns (e.g. future wearable OAuth tokens, see `src/lib/crypto.ts`). Same generation command as above. |
+| `PAYTABS_PROFILE_ID`, `PAYTABS_SERVER_KEY` | No | PayTabs hosted-page credentials for pharmacy checkout. Without them, checkout degrades gracefully with a "payment gateway not configured" message instead of erroring. |
+| `DAILY_API_KEY`, `DAILY_DOMAIN` | No | Daily.co credentials for video consultations. Without them, room creation fails gracefully with a clear error shown in the UI. |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | No | For SMS/voice reminder delivery. Without them, reminders configured for SMS/voice simply don't send. |
+| `RESEND_API_KEY` | No | For transactional email (reminders, delegate invites). Without it, email sends are skipped. |
+| `CRON_SECRET` | No | Bearer token required by `/api/cron/reminders` to authorize the reminder-dispatch cron job. |
 
 **Database options:**
 
@@ -97,55 +110,73 @@ regenerated client's new models until the process restarts.
 ## Foundation vs. built features
 
 **Fully built and working:** signup/login, the AI chat itself (streaming, personalized safety
-system prompt, persistence, emergency escalation), 6-language UI with RTL for Arabic, role field on
-`User`, automatic `FamilyGroup`/`PatientProfile` creation on signup, medications (CRUD, dosage
-schedules, stock tracking, barcode add flow, drug interaction checking), self-assessment + BMI +
-Health Score on the dashboard, vitals tracking (blood pressure, glucose, temperature, weight, SpO2,
-heart rate — with normal-range badges and a trend sparkline per reading type).
-
-**Schema + route skeleton only** (placeholder pages under `src/app/(app)/*` and `src/app/admin/*`,
-real Prisma models, no business logic yet): reminders (beyond the per-medication dose checklist),
-symptoms, cycle tracking, vaccinations, reports, emergency card, profile sharing, expenses,
-consultations, pharmacist chat, pharmacy orders, community, loyalty points, admin dashboards.
+system prompt, persistence, emergency escalation), a second AI persona for pharmacist chat,
+6-language UI with RTL for Arabic, role-based access (`PATIENT`/`DOCTOR`/`PHARMACIST`/`ADMIN`),
+automatic `FamilyGroup`/`PatientProfile` creation on signup and full Family Mode (dependents +
+delegates + profile switching), medications (CRUD, dosage schedules, stock tracking, barcode add
+flow, drug interaction checking), self-assessment + BMI + Health Score, vitals tracking (with
+normal-range badges and trend sparklines), symptom tracking, cycle tracking, vaccinations, health
+reports with a print view, an emergency QR card with a public view, expense tracking, profile
+sharing via QR/link, loyalty points, a patient community (groups/posts/comments), reminders with
+real delivery (SMS/voice via Twilio, email via Resend, dispatched by a cron route), video
+consultations (booking, a dedicated `/doctor` area, real Daily.co calls), pharmacy ordering with a
+real PayTabs checkout flow, a full admin/ops dashboard (users, drugs, interactions, reports,
+chatbot logs, consultations, notifications, analytics — gated to `ADMIN` only), and a mobile-first
+PWA (installable manifest, offline-capable service worker, responsive hamburger nav with RTL
+support).
 
 **Integration stubs** (a real interface + a dev/mock implementation, ready to swap for a real
-provider without touching call sites) — see `src/lib/{otp,email,push,payments,video,storage,
-weather}.ts` and `src/lib/wearables/*`: SMS OTP, email delivery, push notifications, payments,
-video consultations, file storage, weather data, and Fitbit/Apple Health/Google Fit/Samsung Health.
-None of these are real integrations — they log to the console or return synthetic data.
+provider without touching call sites) — see `src/lib/{otp,push,storage,weather}.ts` and
+`src/lib/wearables/*`: SMS OTP (login still uses password auth, not OTP), push notifications
+(no `DeviceToken` model yet), file storage (writes to a local `.local-storage` folder instead of
+S3/R2), weather data, and Fitbit/Apple Health/Google Fit/Samsung Health. These log to the console
+or return synthetic data — not real integrations yet. Payments, video, and reminder delivery
+(email/SMS/voice) are **no longer stubs** — they're wired to real providers, see the Tech stack
+notes above.
 
 ## Architecture
 
 ```
 src/
   app/
-    (auth)/login, signup, verify-otp    # public auth pages
-    (app)/layout.tsx                    # requires a session, renders Header + Sidebar
-    (app)/chat, chat/[id]               # chat UI — fully built
+    (auth)/login, signup                # public auth pages
+    (app)/layout.tsx                    # requires a session, renders Header + mobile-aware Sidebar
+    (app)/chat, chat/[id]                                        # patient AI chat
+    (app)/pharmacist-chat, pharmacist-chat/[id]                  # pharmacist AI chat
     (app)/dashboard, medications, vitals, symptoms, cycle, vaccinations,
           reports, emergency-card, share, expenses, consultations,
-          pharmacist-chat, pharmacy, community, loyalty, settings,
-          profile/{assessment,family}   # placeholder pages (schema exists, UI doesn't yet)
-    admin/layout.tsx                    # requireRole(["ADMIN","DOCTOR"]) gate
+          pharmacy, community, loyalty, reminders, settings,
+          profile/{assessment,family}   # all fully built
+    doctor/layout.tsx, doctor/consultations, doctor/consultations/[id]/call
+                                         # requireRole(["DOCTOR"]) doctor area, real video calls
+    admin/layout.tsx                    # requireRole(["ADMIN"]) gate
     admin/{users,drugs,reports,chatbot-logs,consultations,notifications,analytics}
-    api/auth/[...nextauth], auth/signup, chat, conversations   # built
+    api/**                              # one route module per domain — all built
+    manifest.ts                         # PWA manifest (auto-served at /manifest.webmanifest)
+    offline/page.tsx                    # precached offline fallback
   auth.ts                               # Auth.js v5 config (Credentials + JWT + role)
   lib/
     prisma.ts, gemini.ts, password.ts, validation.ts, session.ts   # built
     audit.ts, interactions.ts, healthScore.ts, qrShare.ts, family.ts,
     locations.ts, crypto.ts, format.ts                             # foundation utilities
-    otp.ts, email.ts, push.ts, payments.ts, video.ts, storage.ts,
-    weather.ts, wearables/*                                        # integration stubs
+    payments.ts, video.ts, email.ts, twilio.ts,
+    reminderDispatch.ts                 # real integrations (PayTabs, Daily.co, Resend, Twilio)
+    otp.ts, push.ts, storage.ts,
+    weather.ts, wearables/*             # remaining dev/mock stubs
   i18n/                                  # dictionaries (6 languages), provider, hook
-  components/                            # chat, auth, layout, ui
+  components/                            # chat, auth, layout, ui, and one folder per module
+public/
+  sw.js                                 # hand-rolled service worker (cache-first assets,
+                                         # network-first pages, offline fallback)
+  icons/                                # PWA app icons (192/512/maskable)
 prisma/
   schema.prisma                         # User/FamilyGroup/PatientProfile + ~30 domain models
-  seed.ts                               # demo drug catalog + interactions
+  seed.ts                               # demo drug catalog + interactions + demo doctors
 ```
 
-Route protection happens in `(app)/layout.tsx` and `admin/layout.tsx` via a server-side `auth()`/
-`requireRole()` check (not global `middleware.ts`) because the Credentials provider and Prisma both
-require the Node.js runtime, which Edge middleware doesn't provide.
+Route protection happens in `(app)/layout.tsx`, `doctor/layout.tsx`, and `admin/layout.tsx` via a
+server-side `auth()`/`requireRole()` check (not global `middleware.ts`) because the Credentials
+provider and Prisma both require the Node.js runtime, which Edge middleware doesn't provide.
 
 **Data model:** every clinical record (medications, vitals, reminders, ...) hangs off a
 `PatientProfile`, not `User` directly, so Family Mode works from day one — a dependent (child,
@@ -168,14 +199,13 @@ independent of the code.
 
 ## Out of scope (not yet started)
 
-Full UI/business logic for each placeholder module (medication CRUD, interaction checking UI,
-report generation, video calling, payments, etc. — see
-[Foundation vs. built features](#foundation-vs-built-features)), any real third-party integration
-(SMS, payments, video, wearables OAuth, pharmacy partners, a licensed drug registry), real
-HIPAA/GDPR compliance, automated test suite.
+Real OTP-based login, push notifications, real wearables OAuth (Fitbit/Apple Health/Google Fit/
+Samsung Health), a real weather provider, object storage (S3/R2) in place of the local dev stub,
+a licensed drug registry, real HIPAA/GDPR compliance, an automated test suite.
 
 ## Known limitations
 
-- The conversation sidebar (and new module nav) is hidden on narrow (mobile) viewports; chat itself
-  remains usable full-width.
 - No automated tests were added yet.
+- Push notifications, OTP login, and wearable sync are still dev stubs (see
+  [Foundation vs. built features](#foundation-vs-built-features)) — they log to the console instead
+  of doing anything real.
