@@ -333,6 +333,9 @@
   "reminders.deactivate": "Désactiver",
   "reminders.activate": "Activer",
   "reminders.delete": "Supprimer",
+  "reminders.form.title": "Nouveau rappel",
+  "reminders.channel.pushNote": "Pas encore disponible — choisissez plutôt le SMS ou l'appel vocal.",
+  "reminders.success": "Rappel ajouté",
 
   "vaccinations.title": "Vaccinations",
   "vaccinations.subtitle": "Suivez les doses déjà reçues et celles à venir à ne pas manquer",

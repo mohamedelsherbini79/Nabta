@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/useTranslation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import type { ReminderChannel } from "@/types";
 
 const TYPE_OPTIONS = ["MEDICATION", "LOCATION", "VACCINATION", "PRESCRIPTION_RENEWAL", "APPOINTMENT", "HEAT"] as const;
-const CHANNEL_OPTIONS = ["PUSH", "SMS", "VOICE"] as const;
+const CHANNEL_OPTIONS: ReminderChannel[] = ["SMS", "VOICE", "PUSH"];
 const RECURRENCE_OPTIONS = ["NONE", "DAILY", "WEEKLY", "MONTHLY"] as const;
+
+const SELECT_CLASSES =
+  "rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
 
 export function ReminderForm({ patientProfileId, phone }: { patientProfileId: string; phone: string | null }) {
   const { t } = useTranslation();
@@ -19,10 +24,17 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
   const [type, setType] = useState<(typeof TYPE_OPTIONS)[number]>("APPOINTMENT");
   const [scheduledFor, setScheduledFor] = useState("");
   const [recurrenceRule, setRecurrenceRule] = useState<(typeof RECURRENCE_OPTIONS)[number]>("NONE");
-  const [channel, setChannel] = useState<(typeof CHANNEL_OPTIONS)[number]>("SMS");
+  const [channel, setChannel] = useState<ReminderChannel>("SMS");
   const [locationLabel, setLocationLabel] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [justAdded, setJustAdded] = useState(false);
+
+  useEffect(() => {
+    if (!justAdded) return;
+    const timer = setTimeout(() => setJustAdded(false), 3000);
+    return () => clearTimeout(timer);
+  }, [justAdded]);
 
   async function handleSubmit() {
     if (!label.trim() || !scheduledFor) return;
@@ -55,21 +67,20 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
     setLabel("");
     setScheduledFor("");
     setLocationLabel("");
+    setJustAdded(true);
     router.refresh();
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <Card className="flex flex-col gap-4">
+      <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{t("reminders.form.title")}</h2>
+
       <Input id="reminderLabel" label={t("reminders.labelLabel")} value={label} onChange={(e) => setLabel(e.target.value)} />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("reminders.typeLabel")}</label>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as typeof type)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          >
+          <select value={type} onChange={(e) => setType(e.target.value as typeof type)} className={SELECT_CLASSES}>
             {TYPE_OPTIONS.map((option) => (
               <option key={option} value={option}>
                 {t(`reminders.type.${option.toLowerCase()}`)}
@@ -96,35 +107,48 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
         />
       )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("reminders.recurrenceLabel")}</label>
-          <select
-            value={recurrenceRule}
-            onChange={(e) => setRecurrenceRule(e.target.value as typeof recurrenceRule)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            {RECURRENCE_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {t(`reminders.recurrence.${option.toLowerCase()}`)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("reminders.channelLabel")}</label>
-          <select
-            value={channel}
-            onChange={(e) => setChannel(e.target.value as typeof channel)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            {CHANNEL_OPTIONS.map((option) => (
-              <option key={option} value={option}>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("reminders.recurrenceLabel")}</label>
+        <select
+          value={recurrenceRule}
+          onChange={(e) => setRecurrenceRule(e.target.value as typeof recurrenceRule)}
+          className={SELECT_CLASSES}
+        >
+          {RECURRENCE_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {t(`reminders.recurrence.${option.toLowerCase()}`)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("reminders.channelLabel")}</label>
+        <div className="flex flex-wrap gap-1.5">
+          {CHANNEL_OPTIONS.map((option) => {
+            const isSelected = channel === option;
+            const isUnavailable = option === "PUSH";
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setChannel(option)}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                  isSelected
+                    ? "bg-teal-600 text-white"
+                    : isUnavailable
+                      ? "border border-dashed border-zinc-300 text-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-500 dark:hover:bg-zinc-800"
+                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+                }`}
+              >
                 {t(`reminders.channel.${option.toLowerCase()}`)}
-              </option>
-            ))}
-          </select>
+              </button>
+            );
+          })}
         </div>
+        {channel === "PUSH" && (
+          <p className="text-xs text-amber-600 dark:text-amber-400">{t("reminders.channel.pushNote")}</p>
+        )}
       </div>
 
       {(channel === "SMS" || channel === "VOICE") &&
@@ -133,15 +157,26 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
             {t("reminders.channel.phoneNote").replace("{phone}", phone)}
           </p>
         ) : (
-          <p className="text-xs text-amber-600 dark:text-amber-400">{t("reminders.channel.noPhoneWarning")}</p>
+          <p className="flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <span aria-hidden="true">⚠</span>
+            <span>{t("reminders.channel.noPhoneWarning")}</span>
+          </p>
         ))}
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && (
+        <p className="flex items-start gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+          <span aria-hidden="true">⚠</span>
+          <span>{error}</span>
+        </p>
+      )}
 
-      <Button onClick={handleSubmit} disabled={submitting || !label.trim() || !scheduledFor} className="self-start">
-        {submitting && <Spinner className="h-4 w-4" />}
-        {submitting ? t("reminders.submitting") : t("reminders.submit")}
-      </Button>
-    </div>
+      <div className="flex items-center gap-3">
+        <Button onClick={handleSubmit} disabled={submitting || !label.trim() || !scheduledFor}>
+          {submitting && <Spinner className="h-4 w-4" />}
+          {submitting ? t("reminders.submitting") : t("reminders.submit")}
+        </Button>
+        {justAdded && <span className="text-sm text-teal-600 dark:text-teal-400">{t("reminders.success")}</span>}
+      </div>
+    </Card>
   );
 }

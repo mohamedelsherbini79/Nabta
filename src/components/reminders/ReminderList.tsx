@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/useTranslation";
-import type { ReminderSummary } from "@/types";
+import { Button } from "@/components/ui/Button";
+import type { ReminderChannel, ReminderSummary } from "@/types";
+
+const CHANNEL_BADGE_CLASSES: Record<ReminderChannel, string> = {
+  SMS: "bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-200",
+  VOICE: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
+  PUSH: "border border-dashed border-amber-300 bg-transparent text-amber-700 dark:border-amber-800 dark:text-amber-400",
+};
 
 export function ReminderList({ reminders, now }: { reminders: ReminderSummary[]; now: string }) {
   const { t, locale } = useTranslation();
@@ -36,7 +43,11 @@ export function ReminderList({ reminders, now }: { reminders: ReminderSummary[];
   }
 
   if (reminders.length === 0) {
-    return <p className="text-sm text-zinc-400">{t("reminders.empty")}</p>;
+    return (
+      <div className="rounded-xl border border-dashed border-zinc-300 p-6 text-center dark:border-zinc-700">
+        <p className="text-sm text-zinc-400">{t("reminders.empty")}</p>
+      </div>
+    );
   }
 
   const nowMs = new Date(now).getTime();
@@ -49,50 +60,56 @@ export function ReminderList({ reminders, now }: { reminders: ReminderSummary[];
         return (
           <li
             key={reminder.id}
-            className={`flex flex-col gap-2 rounded-xl border p-4 ${
+            className={`flex flex-col gap-2 rounded-xl border p-4 shadow-sm transition-colors ${
               reminder.active
-                ? "border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                ? "border-zinc-200 bg-white hover:border-teal-300 dark:border-zinc-800 dark:bg-zinc-900"
                 : "border-zinc-200 bg-zinc-50 opacity-60 dark:border-zinc-800 dark:bg-zinc-950"
             }`}
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{reminder.label}</p>
                   {isDue && (
                     <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-950 dark:text-red-200">
                       {t("reminders.due")}
                     </span>
                   )}
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${CHANNEL_BADGE_CLASSES[reminder.channel]}`}>
+                    {t(`reminders.channel.${reminder.channel.toLowerCase()}`)}
+                  </span>
                 </div>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
                   {reminder.scheduledFor ? dateFormatter.format(new Date(reminder.scheduledFor)) : "—"} ·{" "}
                   {t(`reminders.type.${reminder.type.toLowerCase()}`)}
                   {reminder.recurrenceRule && reminder.recurrenceRule !== "NONE" && (
                     <> · {t(`reminders.recurrence.${reminder.recurrenceRule.toLowerCase()}`)}</>
                   )}
-                  {" · "}
-                  {t(`reminders.channel.${reminder.channel.toLowerCase()}`)}
                 </p>
                 {reminder.locationLabel && <p className="text-xs text-zinc-400">{reminder.locationLabel}</p>}
+                {reminder.channel === "PUSH" && (
+                  <p className="mt-0.5 text-xs text-amber-600 dark:text-amber-400">{t("reminders.channel.pushNote")}</p>
+                )}
               </div>
-              <div className="flex shrink-0 gap-3">
-                <button
+              <div className="flex shrink-0 gap-1.5">
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => toggleActive(reminder)}
                   disabled={busyId === reminder.id}
-                  className="text-xs text-teal-600 hover:underline disabled:opacity-50 dark:text-teal-400"
+                  className="!px-2.5 !py-1 text-xs"
                 >
                   {reminder.active ? t("reminders.deactivate") : t("reminders.activate")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="danger"
                   onClick={() => handleDelete(reminder.id)}
                   disabled={busyId === reminder.id}
-                  className="text-xs text-red-600 hover:underline disabled:opacity-50 dark:text-red-400"
+                  className="!px-2.5 !py-1 text-xs"
                 >
                   {t("reminders.delete")}
-                </button>
+                </Button>
               </div>
             </div>
           </li>

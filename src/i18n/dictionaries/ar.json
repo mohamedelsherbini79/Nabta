@@ -333,6 +333,9 @@
   "reminders.deactivate": "تعطيل",
   "reminders.activate": "تفعيل",
   "reminders.delete": "حذف",
+  "reminders.form.title": "تذكير جديد",
+  "reminders.channel.pushNote": "غير متاح حاليًا — اختر الرسائل النصية أو مكالمة صوتية بدلاً من ذلك.",
+  "reminders.success": "تمت إضافة التذكير",
 
   "vaccinations.title": "التطعيمات",
   "vaccinations.subtitle": "تابع الجرعات اللي اتاخدت والجرعات القادمة اللي متحبش تفوّتها",

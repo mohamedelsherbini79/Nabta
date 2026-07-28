@@ -333,6 +333,9 @@
   "reminders.deactivate": "निष्क्रिय करें",
   "reminders.activate": "सक्रिय करें",
   "reminders.delete": "हटाएं",
+  "reminders.form.title": "नया रिमाइंडर",
+  "reminders.channel.pushNote": "अभी उपलब्ध नहीं है — इसके बजाय SMS या वॉइस कॉल चुनें।",
+  "reminders.success": "रिमाइंडर जोड़ा गया",
 
   "vaccinations.title": "टीकाकरण",
   "vaccinations.subtitle": "अब तक लगे टीकों और आगामी ज़रूरी टीकों का रिकॉर्ड रखें",

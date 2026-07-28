@@ -333,6 +333,9 @@
   "reminders.deactivate": "停用",
   "reminders.activate": "启用",
   "reminders.delete": "删除",
+  "reminders.form.title": "新提醒",
+  "reminders.channel.pushNote": "暂不可用 — 请改用短信或语音通话。",
+  "reminders.success": "提醒已添加",
 
   "vaccinations.title": "疫苗接种",
   "vaccinations.subtitle": "记录已接种的疫苗和即将到期不容错过的接种",
