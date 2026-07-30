@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { canAccessProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import { createEmergencyCardLink, toEmergencyCardLinkSummary } from "@/lib/emergencyCard";
@@ -8,7 +8,7 @@ import { emergencyCardScopeSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const user = await getSessionUser();
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }

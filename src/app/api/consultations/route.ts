@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { canAccessProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import { createConsultation, getConsultationsForProfile, toConsultationSummary } from "@/lib/consultations";
@@ -8,7 +8,7 @@ import { bookConsultationSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  const user = await getSessionUser();
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const user = await getSessionUser();
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { acceptDelegateInvite } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
-export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }

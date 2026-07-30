@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { canAccessProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import {
@@ -13,7 +13,7 @@ import {
 export const runtime = "nodejs";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }

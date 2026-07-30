@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { deleteDependentProfile, isFamilyHead, updateDependentProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
@@ -8,7 +8,7 @@ import { dependentProfileSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }
@@ -45,8 +45,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   return NextResponse.json({ profile: updated });
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }

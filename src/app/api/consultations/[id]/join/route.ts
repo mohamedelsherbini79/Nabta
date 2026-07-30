@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getSessionUserFromRequest } from "@/lib/session";
 import { canAccessProfile } from "@/lib/family";
 import { prisma } from "@/lib/prisma";
 import { ensureVideoRoom, getConsultationById } from "@/lib/consultations";
@@ -7,8 +7,8 @@ import { videoRoomProvider, VideoGatewayNotConfiguredError } from "@/lib/video";
 
 export const runtime = "nodejs";
 
-export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUserFromRequest(req);
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }
