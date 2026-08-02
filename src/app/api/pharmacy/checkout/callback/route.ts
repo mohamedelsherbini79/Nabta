@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   }
 
   if (status === "PAID") {
-    const order = await finalizeCheckoutSuccess(orderId);
+    const order = await finalizeCheckoutSuccess(orderId, tranRef);
     if (order) {
       await logAudit({ action: "PHARMACY_PAYMENT_CONFIRMED", entityType: "PharmacyOrder", entityId: orderId });
     }

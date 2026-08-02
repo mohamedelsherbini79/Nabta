@@ -34,6 +34,12 @@ export function PregnancyStartForm({ patientProfileId }: { patientProfileId: str
     setSubmitting(false);
 
     if (!res.ok) {
+      if (res.status === 409) {
+        // Another request already started tracking (e.g. a second tab) —
+        // just show the resulting pregnancy instead of an error.
+        router.refresh();
+        return;
+      }
       setError(t("pregnancy.error"));
       return;
     }

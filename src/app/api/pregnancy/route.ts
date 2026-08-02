@@ -60,6 +60,12 @@ export async function POST(req: Request) {
   }
 
   const record = await createPregnancy(patientProfileId, parsed.data);
+  if (!record) {
+    return NextResponse.json(
+      { error: "already_active", message: "A pregnancy is already being tracked for this profile." },
+      { status: 409 },
+    );
+  }
   await logAudit({ actorUserId: user.id, action: "PREGNANCY_CREATE", entityType: "PregnancyRecord", entityId: record.id });
 
   return NextResponse.json({ record: toPregnancySummary(record) }, { status: 201 });

@@ -1,3 +1,15 @@
+// Callers must escape any user-supplied value (name, free-text fields, etc.)
+// before interpolating it into `EmailMessage.html` — this module sends the
+// HTML as-is.
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export interface EmailAttachment {
   filename: string;
   content: Buffer;

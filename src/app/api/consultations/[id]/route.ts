@@ -34,7 +34,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const body = await req.json().catch(() => null);
   const status = body?.status;
-  const allowedStatuses = isDoctor ? ["COMPLETED", "NO_SHOW"] : ["CANCELLED", "COMPLETED"];
+  // COMPLETED is a doctor-attested outcome, not something the patient side
+  // should be able to set on their own consultation.
+  const allowedStatuses = isDoctor ? ["COMPLETED", "NO_SHOW"] : ["CANCELLED"];
   if (!allowedStatuses.includes(status)) {
     return NextResponse.json(
       { error: "invalid_input", message: `status must be one of: ${allowedStatuses.join(", ")}.` },

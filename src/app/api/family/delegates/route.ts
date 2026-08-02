@@ -8,7 +8,7 @@ import {
 } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import { delegateInviteSchema } from "@/lib/validation";
-import { emailSender } from "@/lib/email";
+import { emailSender, escapeHtml } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -68,11 +68,13 @@ export async function POST(req: Request) {
   // Best-effort notification — the in-app "Pending Invites" list is the real
   // mechanism, so a failed/unconfigured email must never fail the invite itself.
   const appBaseUrl = process.env.APP_BASE_URL || "http://localhost:3000";
+  const inviterName = escapeHtml(user.name ?? "Someone");
+  const inviterEmail = escapeHtml(user.email ?? "");
   emailSender
     .sendEmail({
       to: parsed.data.email,
       subject: `${user.name ?? "Someone"} invited you to their family health group`,
-      html: `<p>${user.name ?? "Someone"} (${user.email}) invited you to help manage their family's health on Nabta.</p><p>Log in and visit <a href="${appBaseUrl}/profile/family">Family Mode</a> to accept.</p>`,
+      html: `<p>${inviterName} (${inviterEmail}) invited you to help manage their family's health on Nabta.</p><p>Log in and visit <a href="${appBaseUrl}/profile/family">Family Mode</a> to accept.</p>`,
     })
     .catch((err) => console.error("Delegate invite email failed:", err));
 

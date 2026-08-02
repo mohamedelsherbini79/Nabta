@@ -1,27 +1,27 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { canAccessProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import { toInsuranceClaimSummary, updateClaimStatus } from "@/lib/insurance";
 import { insuranceClaimStatusSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
+// Claim status (SUBMITTED/APPROVED/REJECTED/PAID) is an adjudication
+// decision, not something the claimant themselves should be able to set —
+// restricted to staff (ADMIN), same pattern as src/app/api/admin/**.
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }
-
-  const { id } = await params;
-  const claim = await prisma.insuranceClaim.findUnique({ where: { id }, include: { policy: true } });
-  if (!claim) {
-    return NextResponse.json({ error: "not_found", message: "Claim not found." }, { status: 404 });
+  if (user.role !== "ADMIN") {
+    return NextResponse.json({ error: "forbidden", message: "Admin access required." }, { status: 403 });
   }
 
-  const allowed = await canAccessProfile(user.id, claim.policy.patientProfileId);
-  if (!allowed) {
+  const { id } = await params;
+  const claim = await prisma.insuranceClaim.findUnique({ where: { id } });
+  if (!claim) {
     return NextResponse.json({ error: "not_found", message: "Claim not found." }, { status: 404 });
   }
 

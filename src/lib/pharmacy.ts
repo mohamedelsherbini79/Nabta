@@ -108,17 +108,26 @@ export function attachPaymentSession(orderId: string, provider: string, tranRef:
   });
 }
 
-export async function finalizeCheckoutSuccess(orderId: string) {
+// `tranRef` must be the PayTabs transaction the caller has independently
+// confirmed as PAID. We only trust it if it matches the ref this order's own
+// checkout session stored (`attachPaymentSession`) — otherwise a real PAID
+// tran_ref from an unrelated (e.g. cheaper) order could be replayed against
+// this one to mark it paid for free. The status transition is also done as a
+// single conditional update so two concurrent finalize calls (webhook +
+// return-page fallback both landing at once) can't both pass the guard and
+// create two expense records for the same order.
+export async function finalizeCheckoutSuccess(orderId: string, tranRef: string) {
   const order = await getOrderById(orderId);
   if (!order || order.status !== "AWAITING_PAYMENT") return null;
+  if (!order.paymentRef || order.paymentRef !== tranRef) return null;
 
   const total = orderTotal(order.items);
 
-  const updated = await prisma.pharmacyOrder.update({
-    where: { id: orderId },
+  const result = await prisma.pharmacyOrder.updateMany({
+    where: { id: orderId, status: "AWAITING_PAYMENT" },
     data: { status: "PLACED" },
-    include: ORDER_INCLUDE,
   });
+  if (result.count === 0) return null;
 
   await prisma.expenseRecord.create({
     data: {
@@ -131,7 +140,7 @@ export async function finalizeCheckoutSuccess(orderId: string) {
     },
   });
 
-  return updated;
+  return getOrderById(orderId);
 }
 
 export function finalizeCheckoutFailure(orderId: string) {

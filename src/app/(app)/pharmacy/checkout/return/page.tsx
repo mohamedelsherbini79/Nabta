@@ -27,7 +27,7 @@ export default async function PharmacyCheckoutReturnPage({
     try {
       const status = await paymentProvider.queryTransaction(order.paymentRef);
       if (status === "PAID") {
-        order = (await finalizeCheckoutSuccess(order.id)) ?? order;
+        order = (await finalizeCheckoutSuccess(order.id, order.paymentRef)) ?? order;
       } else if (status === "FAILED") {
         order = (await finalizeCheckoutFailure(order.id)) ?? order;
       }

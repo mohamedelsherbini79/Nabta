@@ -3,16 +3,26 @@ import { getSessionUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { gemini, buildSystemPrompt, CHAT_MODEL } from "@/lib/gemini";
 import { chatMessageSchema } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
 const HISTORY_LIMIT = 20;
 const TITLE_LENGTH = 60;
+const CHAT_RATE_LIMIT = 20;
+const CHAT_RATE_WINDOW_MS = 60_000;
 
 export async function POST(req: Request) {
   const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
+  }
+
+  if (!checkRateLimit(`chat:${user.id}`, CHAT_RATE_LIMIT, CHAT_RATE_WINDOW_MS)) {
+    return NextResponse.json(
+      { error: "rate_limited", message: "Too many messages, please slow down." },
+      { status: 429 },
+    );
   }
 
   const body = await req.json().catch(() => null);

@@ -367,12 +367,19 @@ export const drugGeneCheckSchema = z.object({
 });
 export type DrugGeneCheckInput = z.infer<typeof drugGeneCheckSchema>;
 
+const MOOD_LOGGED_AT_MAX_PAST_MS = 2 * 365 * 24 * 60 * 60 * 1000; // 2 years
+const CLOCK_SKEW_GRACE_MS = 24 * 60 * 60 * 1000; // 1 day, for client/server clock drift
+
 export const moodEntrySchema = z.object({
   mood: z.enum(["TERRIBLE", "BAD", "NEUTRAL", "GOOD", "EXCELLENT"]),
   sleepHours: z.coerce.number().min(0).max(24).optional().nullable(),
   stressLevel: z.coerce.number().int().min(1).max(10).optional().nullable(),
   note: z.string().trim().max(500).optional().nullable(),
-  loggedAt: z.coerce.date().optional(),
+  loggedAt: z.coerce
+    .date()
+    .refine((d) => d.getTime() <= Date.now() + CLOCK_SKEW_GRACE_MS, { message: "loggedAt cannot be in the future" })
+    .refine((d) => d.getTime() >= Date.now() - MOOD_LOGGED_AT_MAX_PAST_MS, { message: "loggedAt is too far in the past" })
+    .optional(),
 });
 export type MoodEntryInput = z.infer<typeof moodEntrySchema>;
 
@@ -402,8 +409,13 @@ export const insuranceClaimStatusSchema = z.object({
 });
 export type InsuranceClaimStatusInput = z.infer<typeof insuranceClaimStatusSchema>;
 
+const LMP_MAX_PAST_MS = 300 * 24 * 60 * 60 * 1000; // ~300 days, comfortably past a full-term pregnancy
+
 export const pregnancyRecordSchema = z.object({
-  lastPeriodDate: z.coerce.date(),
+  lastPeriodDate: z.coerce
+    .date()
+    .refine((d) => d.getTime() <= Date.now() + CLOCK_SKEW_GRACE_MS, { message: "lastPeriodDate cannot be in the future" })
+    .refine((d) => d.getTime() >= Date.now() - LMP_MAX_PAST_MS, { message: "lastPeriodDate is too far in the past" }),
   notes: z.string().trim().max(500).optional().nullable(),
 });
 export type PregnancyRecordInput = z.infer<typeof pregnancyRecordSchema>;

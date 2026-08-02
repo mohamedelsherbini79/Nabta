@@ -26,15 +26,26 @@ export function getPregnancyHistory(patientProfileId: string) {
   });
 }
 
-export function createPregnancy(patientProfileId: string, input: PregnancyRecordInput) {
+// Guards against creating a second ACTIVE record for the same profile (e.g.
+// two open tabs both submitting the start-tracking form). The check and
+// insert run inside one transaction so they see a consistent snapshot;
+// returns null instead of a duplicate when one is already active.
+export async function createPregnancy(patientProfileId: string, input: PregnancyRecordInput) {
   const dueDate = computeDueDate(input.lastPeriodDate);
-  return prisma.pregnancyRecord.create({
-    data: {
-      patientProfileId,
-      lastPeriodDate: input.lastPeriodDate,
-      dueDate,
-      notes: input.notes ?? null,
-    },
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.pregnancyRecord.findFirst({
+      where: { patientProfileId, status: "ACTIVE" },
+    });
+    if (existing) return null;
+
+    return tx.pregnancyRecord.create({
+      data: {
+        patientProfileId,
+        lastPeriodDate: input.lastPeriodDate,
+        dueDate,
+        notes: input.notes ?? null,
+      },
+    });
   });
 }
 
