@@ -27,7 +27,7 @@ const resendSender: EmailSender = {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) throw new EmailNotConfiguredError();
 
-    const from = process.env.EMAIL_FROM || "AI Consultation Platform <onboarding@resend.dev>";
+    const from = process.env.EMAIL_FROM || "Nabta <onboarding@resend.dev>";
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

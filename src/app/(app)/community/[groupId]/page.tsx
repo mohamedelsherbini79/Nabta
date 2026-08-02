@@ -22,7 +22,7 @@ export default async function CommunityGroupPage({ params }: { params: Promise<{
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 sm:p-6">
       <div>
-        <Link href="/community" className="text-xs text-teal-600 hover:underline dark:text-teal-400">
+        <Link href="/community" className="text-xs text-green-600 hover:underline dark:text-green-400">
           <TranslatedText k="community.backToGroups" />
         </Link>
         <h1 className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-50">{group.name}</h1>

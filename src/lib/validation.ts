@@ -350,3 +350,65 @@ export const systemNotificationSchema = z.object({
   body: z.string().trim().min(1).max(2000),
 });
 export type SystemNotificationInput = z.infer<typeof systemNotificationSchema>;
+
+export const geneVariantSchema = z.object({
+  gene: z.string().trim().min(1).max(30),
+  phenotype: z.string().trim().min(1).max(100),
+  rsid: z.string().trim().max(30).optional(),
+});
+export const geneticProfileSchema = z.object({
+  source: z.enum(["23ANDME", "ANCESTRYDNA", "VCF", "MANUAL"]),
+  variants: z.array(geneVariantSchema).min(1).max(500),
+});
+export type GeneticProfileInput = z.infer<typeof geneticProfileSchema>;
+
+export const drugGeneCheckSchema = z.object({
+  drugName: z.string().trim().min(1).max(150),
+});
+export type DrugGeneCheckInput = z.infer<typeof drugGeneCheckSchema>;
+
+export const moodEntrySchema = z.object({
+  mood: z.enum(["TERRIBLE", "BAD", "NEUTRAL", "GOOD", "EXCELLENT"]),
+  sleepHours: z.coerce.number().min(0).max(24).optional().nullable(),
+  stressLevel: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  note: z.string().trim().max(500).optional().nullable(),
+  loggedAt: z.coerce.date().optional(),
+});
+export type MoodEntryInput = z.infer<typeof moodEntrySchema>;
+
+export const healthFacilitySearchSchema = z.object({
+  city: z.string().trim().max(100).optional(),
+  type: z.enum(["HOSPITAL", "CLINIC", "PHARMACY", "LAB"]).optional(),
+});
+export type HealthFacilitySearchInput = z.infer<typeof healthFacilitySearchSchema>;
+
+export const insurancePolicySchema = z.object({
+  provider: z.string().trim().min(1).max(100),
+  policyNumber: z.string().trim().min(1).max(100),
+  memberId: z.string().trim().max(100).optional().nullable(),
+  planType: z.string().trim().max(100).optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
+});
+export type InsurancePolicyInput = z.infer<typeof insurancePolicySchema>;
+
+export const insuranceClaimSchema = z.object({
+  description: z.string().trim().min(1).max(300),
+  amount: z.coerce.number().min(0).max(10_000_000),
+});
+export type InsuranceClaimInput = z.infer<typeof insuranceClaimSchema>;
+
+export const insuranceClaimStatusSchema = z.object({
+  status: z.enum(["SUBMITTED", "APPROVED", "REJECTED", "PAID"]),
+});
+export type InsuranceClaimStatusInput = z.infer<typeof insuranceClaimStatusSchema>;
+
+export const pregnancyRecordSchema = z.object({
+  lastPeriodDate: z.coerce.date(),
+  notes: z.string().trim().max(500).optional().nullable(),
+});
+export type PregnancyRecordInput = z.infer<typeof pregnancyRecordSchema>;
+
+export const pregnancyNotesSchema = z.object({
+  notes: z.string().trim().max(500).optional().nullable(),
+});
+export type PregnancyNotesInput = z.infer<typeof pregnancyNotesSchema>;

@@ -80,7 +80,7 @@ export function VaccinationForm({ patientProfileId }: { patientProfileId: string
             list="commonVaccines"
             value={vaccineName}
             onChange={(e) => setVaccineName(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
           />
           <datalist id="commonVaccines">
             {COMMON_VACCINES.map((v) => (

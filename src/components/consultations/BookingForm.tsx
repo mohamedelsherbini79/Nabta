@@ -100,7 +100,7 @@ export function BookingForm({ patientProfileId, doctors }: { patientProfileId: s
                   onClick={() => setSelectedSlot(slot)}
                   className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                     selectedSlot === slot
-                      ? "bg-teal-600 text-white"
+                      ? "bg-green-600 text-white"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
                   }`}
                 >

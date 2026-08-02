@@ -107,7 +107,7 @@ export function MedicationDetail({
       </div>
 
       {saved && !editing && (
-        <p className="text-sm text-teal-600 dark:text-teal-400">{t("medications.detail.savedSuccess")}</p>
+        <p className="text-sm text-green-600 dark:text-green-400">{t("medications.detail.savedSuccess")}</p>
       )}
 
       {interactions.length > 0 && (

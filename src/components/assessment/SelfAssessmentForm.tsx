@@ -132,7 +132,7 @@ export function SelfAssessmentForm({
                 onClick={() => setSex(option)}
                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   sex === option
-                    ? "bg-teal-600 text-white"
+                    ? "bg-green-600 text-white"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
                 }`}
               >
@@ -251,7 +251,7 @@ export function SelfAssessmentForm({
               onClick={() => toggleGoal(goal)}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                 goals.includes(goal)
-                  ? "bg-teal-600 text-white"
+                  ? "bg-green-600 text-white"
                   : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
               }`}
             >

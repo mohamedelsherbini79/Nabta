@@ -14,7 +14,7 @@ export default async function AdminChatbotLogDetailPage({ params }: { params: Pr
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6">
-      <Link href="/admin/chatbot-logs" className="text-xs text-teal-600 hover:underline dark:text-teal-400">
+      <Link href="/admin/chatbot-logs" className="text-xs text-green-600 hover:underline dark:text-green-400">
         <TranslatedText k="admin.chatbotLogs.backToList" />
       </Link>
 

@@ -17,7 +17,7 @@ export function VitalSparkline({ values }: { values: number[] }) {
   });
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-12 w-full text-teal-500" aria-hidden="true">
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-12 w-full text-green-500" aria-hidden="true">
       <polyline
         points={points.join(" ")}
         fill="none"

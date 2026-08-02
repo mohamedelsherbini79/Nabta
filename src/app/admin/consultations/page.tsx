@@ -41,7 +41,7 @@ export default async function AdminConsultationsPage({
             href={tab.status ? `/admin/consultations?status=${tab.status}` : "/admin/consultations"}
             className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
               activeStatus === tab.status
-                ? "bg-teal-600 text-white"
+                ? "bg-green-600 text-white"
                 : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >

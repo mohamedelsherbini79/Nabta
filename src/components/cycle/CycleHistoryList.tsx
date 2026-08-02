@@ -57,7 +57,7 @@ export function CycleHistoryList({ entries }: { entries: CycleEntrySummary[] }) 
                   type="button"
                   onClick={() => handleMarkEnded(entry.id)}
                   disabled={busyId === entry.id}
-                  className="text-xs text-teal-600 hover:underline disabled:opacity-50 dark:text-teal-400"
+                  className="text-xs text-green-600 hover:underline disabled:opacity-50 dark:text-green-400"
                 >
                   {t("cycle.history.markEnded")}
                 </button>

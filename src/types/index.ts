@@ -435,3 +435,95 @@ export interface AnalyticsSummary {
   loyaltyPointsIssued: number;
   weeklySignups: AnalyticsWeeklySignup[];
 }
+
+export type GeneticProfileSource = "23ANDME" | "ANCESTRYDNA" | "VCF" | "MANUAL";
+
+export interface GeneVariant {
+  gene: string;
+  phenotype: string;
+  rsid?: string;
+}
+
+export interface GeneticProfileSummary {
+  id: string;
+  source: GeneticProfileSource;
+  variants: GeneVariant[];
+  uploadedAt: string;
+}
+
+export interface DrugGeneWarning {
+  gene: string;
+  phenotype: string;
+  message: string;
+  recommendation: string;
+}
+
+export interface DrugGeneCheckResult {
+  drugName: string;
+  safe: boolean;
+  summary: string;
+  warnings: DrugGeneWarning[];
+}
+
+export type MoodLevel = "TERRIBLE" | "BAD" | "NEUTRAL" | "GOOD" | "EXCELLENT";
+
+export interface MoodEntrySummary {
+  id: string;
+  mood: MoodLevel;
+  sleepHours: number | null;
+  stressLevel: number | null;
+  note: string | null;
+  loggedAt: string;
+}
+
+export type HealthFacilityType = "HOSPITAL" | "CLINIC" | "PHARMACY" | "LAB";
+
+export interface HealthFacilitySummary {
+  id: string;
+  name: string;
+  type: HealthFacilityType;
+  city: string;
+  address: string;
+  phone: string | null;
+  lat: number | null;
+  lng: number | null;
+}
+
+export type InsuranceClaimStatus = "SUBMITTED" | "APPROVED" | "REJECTED" | "PAID";
+
+export interface InsuranceClaimSummary {
+  id: string;
+  description: string;
+  amount: number;
+  status: InsuranceClaimStatus;
+  submittedAt: string;
+}
+
+export interface InsurancePolicySummary {
+  id: string;
+  provider: string;
+  policyNumber: string;
+  memberId: string | null;
+  planType: string | null;
+  expiryDate: string | null;
+  claims: InsuranceClaimSummary[];
+}
+
+export type PregnancyStatus = "ACTIVE" | "COMPLETED";
+export type Trimester = 1 | 2 | 3;
+
+export interface PregnancySummary {
+  id: string;
+  lastPeriodDate: string;
+  dueDate: string;
+  status: PregnancyStatus;
+  notes: string | null;
+  currentWeek: number;
+  currentDay: number;
+  trimester: Trimester;
+  daysPregnant: number;
+  daysUntilDue: number;
+  babySize: string;
+  tip: string;
+  createdAt: string;
+}

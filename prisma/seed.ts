@@ -204,10 +204,60 @@ async function seedCommunityGroups() {
   console.log(`Seeded ${communityGroups.length} community groups.`);
 }
 
+interface HealthFacilitySeed {
+  name: string;
+  type: "HOSPITAL" | "CLINIC" | "PHARMACY" | "LAB";
+  city: string;
+  address: string;
+  phone?: string;
+  lat?: number;
+  lng?: number;
+}
+
+const healthFacilities: HealthFacilitySeed[] = [
+  { name: "Qasr Al Ainy Hospital", type: "HOSPITAL", city: "Cairo", address: "Al Manial, Cairo", phone: "+20223684500", lat: 30.0295, lng: 31.2296 },
+  { name: "Dar Al Fouad Hospital", type: "HOSPITAL", city: "Giza", address: "6th of October City, Giza", phone: "+20238281000", lat: 29.9679, lng: 30.9153 },
+  { name: "Alexandria Main University Hospital", type: "HOSPITAL", city: "Alexandria", address: "Al Khartoum St, Alexandria", phone: "+20342865766", lat: 31.2001, lng: 29.9187 },
+  { name: "As-Salam International Hospital", type: "HOSPITAL", city: "Cairo", address: "Corniche El Nil, Maadi, Cairo", phone: "+20225240250", lat: 29.9601, lng: 31.2569 },
+  { name: "Nabta Family Clinic", type: "CLINIC", city: "Cairo", address: "Mohandessin, Cairo", phone: "+20233456789", lat: 30.0571, lng: 31.2001 },
+  { name: "Al Salam Polyclinic", type: "CLINIC", city: "Giza", address: "Dokki, Giza", phone: "+20237601122", lat: 30.0378, lng: 31.2119 },
+  { name: "Smouha Medical Center", type: "CLINIC", city: "Alexandria", address: "Smouha, Alexandria", phone: "+20342221100", lat: 31.2156, lng: 29.9553 },
+  { name: "Seif Pharmacy", type: "PHARMACY", city: "Cairo", address: "Zamalek, Cairo", phone: "+20227351234", lat: 30.0626, lng: 31.2219 },
+  { name: "El Ezaby Pharmacy", type: "PHARMACY", city: "Giza", address: "Haram St, Giza", phone: "+20233851234", lat: 29.9887, lng: 31.1342 },
+  { name: "Roshdy Pharmacy", type: "PHARMACY", city: "Alexandria", address: "Roshdy, Alexandria", phone: "+20342456789", lat: 31.2258, lng: 29.9548 },
+  { name: "Al Borg Laboratories", type: "LAB", city: "Cairo", address: "Nasr City, Cairo", phone: "+20222741234", lat: 30.0626, lng: 31.3467 },
+  { name: "Alfa Lab", type: "LAB", city: "Giza", address: "6th of October City, Giza", phone: "+20238331234", lat: 29.9757, lng: 30.9296 },
+  { name: "Biolab Alexandria", type: "LAB", city: "Alexandria", address: "Sidi Gaber, Alexandria", phone: "+20342781234", lat: 31.2247, lng: 29.9505 },
+];
+
+async function seedHealthFacilities() {
+  const existing = await prisma.healthFacility.count();
+  if (existing > 0) {
+    console.log(`HealthFacility already has ${existing} rows — skipping seed (idempotent).`);
+    return;
+  }
+
+  for (const facility of healthFacilities) {
+    await prisma.healthFacility.create({
+      data: {
+        name: facility.name,
+        type: facility.type,
+        city: facility.city,
+        address: facility.address,
+        phone: facility.phone ?? null,
+        lat: facility.lat ?? null,
+        lng: facility.lng ?? null,
+      },
+    });
+  }
+  console.log(`Seeded ${healthFacilities.length} health facilities.`);
+}
+
 async function main() {
   await seedDrugs();
   await seedDoctors();
   await seedCommunityGroups();
+  await seedHealthFacilities();
 }
 
 main()

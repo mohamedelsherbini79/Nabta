@@ -52,7 +52,7 @@ export function BroadcastForm() {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={3}
-          className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+          className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
         />
       </div>
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}

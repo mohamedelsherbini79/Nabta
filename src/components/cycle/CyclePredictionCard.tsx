@@ -24,7 +24,7 @@ export function CyclePredictionCard({ prediction }: { prediction: CyclePredictio
           </div>
           <div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("cycle.prediction.nextPeriod")}</p>
-            <p className="text-lg font-semibold text-teal-600 dark:text-teal-400">
+            <p className="text-lg font-semibold text-green-600 dark:text-green-400">
               {prediction.predictedNextStart ? dateFormatter.format(new Date(prediction.predictedNextStart)) : "—"}
             </p>
           </div>

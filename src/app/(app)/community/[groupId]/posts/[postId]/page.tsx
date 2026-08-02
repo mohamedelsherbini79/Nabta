@@ -30,7 +30,7 @@ export default async function CommunityPostPage({
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 sm:p-6">
-      <Link href={`/community/${groupId}`} className="text-xs text-teal-600 hover:underline dark:text-teal-400">
+      <Link href={`/community/${groupId}`} className="text-xs text-green-600 hover:underline dark:text-green-400">
         <TranslatedText k="community.backToGroup" />
       </Link>
 

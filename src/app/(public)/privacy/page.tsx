@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Contact</h2>
         <p>
           Questions about this policy or your data can be sent to{" "}
-          <a className="text-teal-700 underline dark:text-teal-400" href="mailto:mohamed.elsherbini79@gmail.com">
+          <a className="text-green-700 underline dark:text-green-400" href="mailto:mohamed.elsherbini79@gmail.com">
             mohamed.elsherbini79@gmail.com
           </a>
           .

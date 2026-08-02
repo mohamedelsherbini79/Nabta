@@ -39,7 +39,7 @@ export function SymptomLogList({ logs }: { logs: SymptomLogSummary[] }) {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-sm font-semibold text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-50 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
                 {log.severity}
               </span>
               <span className="text-sm text-zinc-500 dark:text-zinc-400">

@@ -44,7 +44,7 @@ export function MessageInput({
         placeholder={t(placeholderKey)}
         rows={1}
         disabled={disabled}
-        className="max-h-40 flex-1 resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+        className="max-h-40 flex-1 resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
       />
       <Button type="submit" disabled={disabled || value.trim().length === 0}>
         {t("chat.send")}

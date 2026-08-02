@@ -28,7 +28,7 @@ export function LoyaltyHistoryList({ entries }: { entries: LoyaltyLedgerEntrySum
             </p>
             <p className="text-xs text-zinc-400">{new Date(entry.createdAt).toLocaleString()}</p>
           </div>
-          <p className={`text-sm font-semibold ${entry.delta >= 0 ? "text-teal-600 dark:text-teal-400" : "text-red-600 dark:text-red-400"}`}>
+          <p className={`text-sm font-semibold ${entry.delta >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
             {entry.delta >= 0 ? `+${entry.delta}` : entry.delta}
           </p>
         </li>

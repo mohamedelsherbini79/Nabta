@@ -50,7 +50,7 @@ export function SymptomLogForm({ patientProfileId }: { patientProfileId: string 
           <label htmlFor="severity" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             {t("symptoms.severityLabel")}
           </label>
-          <span className="text-lg font-semibold text-teal-600 dark:text-teal-400">{severity}</span>
+          <span className="text-lg font-semibold text-green-600 dark:text-green-400">{severity}</span>
         </div>
         <input
           id="severity"
@@ -59,7 +59,7 @@ export function SymptomLogForm({ patientProfileId }: { patientProfileId: string 
           max={10}
           value={severity}
           onChange={(e) => setSeverity(Number(e.target.value))}
-          className="mt-2 w-full accent-teal-600"
+          className="mt-2 w-full accent-green-600"
         />
         <div className="mt-1 flex justify-between text-xs text-zinc-400">
           <span>{t("symptoms.severityLow")}</span>
@@ -83,7 +83,7 @@ export function SymptomLogForm({ patientProfileId }: { patientProfileId: string 
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={2}
-          className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900"
         />
       </div>
 

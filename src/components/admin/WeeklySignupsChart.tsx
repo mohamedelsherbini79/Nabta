@@ -47,7 +47,7 @@ export function WeeklySignupsChart({ data }: { data: AnalyticsWeeklySignup[] }) 
                 width={barWidth}
                 height={Math.max(barHeight, 1)}
                 rx={3}
-                className={isHovered ? "fill-teal-700 dark:fill-teal-400" : "fill-teal-600 dark:fill-teal-500"}
+                className={isHovered ? "fill-green-700 dark:fill-green-400" : "fill-green-600 dark:fill-green-500"}
                 onMouseEnter={() => setHoverIndex(i)}
                 onMouseLeave={() => setHoverIndex(null)}
               >

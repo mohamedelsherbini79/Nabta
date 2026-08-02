@@ -27,7 +27,7 @@ export default async function ConsultationsPage() {
         </div>
         <Link
           href="/consultations/book"
-          className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+          className="rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
         >
           <TranslatedText k="consultations.bookButton" />
         </Link>

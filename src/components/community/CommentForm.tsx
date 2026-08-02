@@ -42,7 +42,7 @@ export function CommentForm({ postId }: { postId: string }) {
         onChange={(e) => setContent(e.target.value)}
         placeholder={t("community.comment.placeholder")}
         rows={2}
-        className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+        className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
       />
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <Button onClick={handleSubmit} disabled={submitting || content.trim().length === 0} className="self-start !px-3 !py-1.5 text-xs">

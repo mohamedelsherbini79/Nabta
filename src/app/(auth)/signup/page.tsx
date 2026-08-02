@@ -25,7 +25,7 @@ export default async function SignupPage() {
         <SignupForm />
         <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
           <TranslatedText k="auth.signup.haveAccount" />{" "}
-          <Link href="/login" className="font-medium text-teal-600 hover:underline">
+          <Link href="/login" className="font-medium text-green-600 hover:underline">
             <TranslatedText k="auth.signup.loginLink" />
           </Link>
         </p>

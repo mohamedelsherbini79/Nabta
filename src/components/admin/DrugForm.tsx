@@ -105,7 +105,7 @@ export function DrugForm({
           type="checkbox"
           checked={values.heatSensitive}
           onChange={(e) => setValues((v) => ({ ...v, heatSensitive: e.target.checked }))}
-          className="accent-teal-600"
+          className="accent-green-600"
         />
         {t("admin.drugs.heatSensitive")}
       </label>

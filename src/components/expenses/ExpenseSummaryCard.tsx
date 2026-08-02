@@ -52,7 +52,7 @@ export function ExpenseSummaryCard({ summary }: { summary: ExpenseSummary }) {
                   </span>
                   <div className="h-2 flex-1 rounded-full bg-zinc-100 dark:bg-zinc-800">
                     <div
-                      className="h-2 rounded-full bg-teal-600"
+                      className="h-2 rounded-full bg-green-600"
                       style={{ width: `${Math.max((c.total / maxTotal) * 100, 4)}%` }}
                     />
                   </div>

@@ -60,7 +60,7 @@ export function TagListInput({
           onKeyDown={handleKeyDown}
           onBlur={addTag}
           placeholder={placeholder}
-          className="min-w-[8rem] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="min-w-[8rem] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900"
         />
       </div>
     </div>

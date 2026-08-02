@@ -45,14 +45,14 @@ export function ScheduleBuilder({
           {value.timesOfDay.map((time) => (
             <span
               key={time}
-              className="flex items-center gap-1 rounded-full bg-teal-50 px-3 py-1 text-sm text-teal-800 dark:bg-teal-950 dark:text-teal-200"
+              className="flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-sm text-green-800 dark:bg-green-950 dark:text-green-200"
             >
               {time}
               <button
                 type="button"
                 onClick={() => removeTime(time)}
                 aria-label="Remove"
-                className="ms-1 text-teal-600 hover:text-teal-900 dark:text-teal-400"
+                className="ms-1 text-green-600 hover:text-green-900 dark:text-green-400"
               >
                 ✕
               </button>
@@ -84,7 +84,7 @@ export function ScheduleBuilder({
                 onClick={() => toggleDay(day)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   active
-                    ? "bg-teal-600 text-white"
+                    ? "bg-green-600 text-white"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
                 }`}
               >

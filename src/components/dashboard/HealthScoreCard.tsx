@@ -12,7 +12,7 @@ const BREAKDOWN_KEYS: { key: keyof HealthScoreBreakdown; labelKey: string }[] = 
 ];
 
 function scoreColor(score: number): string {
-  if (score >= 75) return "text-teal-600 dark:text-teal-400";
+  if (score >= 75) return "text-green-600 dark:text-green-400";
   if (score >= 50) return "text-amber-600 dark:text-amber-400";
   return "text-red-600 dark:text-red-400";
 }
@@ -39,7 +39,7 @@ export function HealthScoreCard({
             </div>
             <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
               <div
-                className="h-full rounded-full bg-teal-500"
+                className="h-full rounded-full bg-green-500"
                 style={{ width: `${breakdown[key]}%` }}
               />
             </div>

@@ -53,7 +53,7 @@ export function ConversationList({
                   href={`${basePath}/${c.id}`}
                   className={`flex-1 truncate rounded-lg px-2.5 py-2 text-sm transition-colors ${
                     active
-                      ? "bg-teal-50 text-teal-900 dark:bg-teal-950 dark:text-teal-100"
+                      ? "bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100"
                       : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   }`}
                 >

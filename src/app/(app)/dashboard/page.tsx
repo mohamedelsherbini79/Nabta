@@ -33,7 +33,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/profile/assessment"
-          className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+          className="rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
         >
           <TranslatedText k="dashboard.retakeAssessment" />
         </Link>

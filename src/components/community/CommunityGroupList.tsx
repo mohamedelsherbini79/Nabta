@@ -35,7 +35,7 @@ export function CommunityGroupList({ groups }: { groups: CommunityGroupSummary[]
         >
           <div>
             {group.isMember ? (
-              <Link href={`/community/${group.id}`} className="text-sm font-semibold text-teal-700 hover:underline dark:text-teal-400">
+              <Link href={`/community/${group.id}`} className="text-sm font-semibold text-green-700 hover:underline dark:text-green-400">
                 {group.name}
               </Link>
             ) : (

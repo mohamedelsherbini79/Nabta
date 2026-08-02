@@ -85,15 +85,15 @@ export default async function PublicEmergencyCardPage({ params }: { params: Prom
       )}
 
       {(data.emergencyContactName || data.emergencyContactPhone) && (
-        <div className="rounded-xl border border-teal-300 bg-teal-50 p-4 dark:border-teal-800 dark:bg-teal-950">
-          <p className="text-sm font-medium text-teal-800 dark:text-teal-200">
+        <div className="rounded-xl border border-green-300 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950">
+          <p className="text-sm font-medium text-green-800 dark:text-green-200">
             <TranslatedText k="emergencyCard.public.emergencyContact" />
           </p>
           {data.emergencyContactName && (
             <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-50">{data.emergencyContactName}</p>
           )}
           {data.emergencyContactPhone && (
-            <a href={`tel:${data.emergencyContactPhone}`} className="text-lg font-semibold text-teal-700 underline dark:text-teal-300">
+            <a href={`tel:${data.emergencyContactPhone}`} className="text-lg font-semibold text-green-700 underline dark:text-green-300">
               {data.emergencyContactPhone}
             </a>
           )}

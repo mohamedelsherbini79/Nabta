@@ -1,14 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cairo, Geist_Mono } from "next/font/google";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { DEFAULT_LOCALE, isSupportedLocale } from "@/i18n/locale";
 import { ServiceWorkerRegister } from "@/components/layout/ServiceWorkerRegister";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Cairo is a bilingual Arabic/Latin typeface — one clean, warm font family for
+// both scripts instead of Arabic silently falling back to the OS system font.
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -17,12 +20,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Consultation Platform",
+  title: "Nabta",
   description: "General medical information powered by AI",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "AI Consult",
+    title: "Nabta",
   },
   icons: {
     apple: "/apple-touch-icon.png",
@@ -33,7 +36,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0d9488",
+  themeColor: "#16a34a",
 };
 
 export default async function RootLayout({
@@ -50,7 +53,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${cairo.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegister />

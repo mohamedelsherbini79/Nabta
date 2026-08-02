@@ -41,7 +41,7 @@ export default async function AdminChatbotLogsPage({
             href={tab.kind ? `/admin/chatbot-logs?kind=${tab.kind}` : "/admin/chatbot-logs"}
             className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
               activeKind === tab.kind
-                ? "bg-teal-600 text-white"
+                ? "bg-green-600 text-white"
                 : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
@@ -76,7 +76,7 @@ export default async function AdminChatbotLogsPage({
               <tr key={c.id} className="border-b border-zinc-100 last:border-0 dark:border-zinc-900">
                 <td className="px-3 py-2 text-zinc-900 dark:text-zinc-50">{c.userEmail}</td>
                 <td className="px-3 py-2 text-zinc-700 dark:text-zinc-300">
-                  <Link href={`/admin/chatbot-logs/${c.id}`} className="text-teal-600 hover:underline dark:text-teal-400">
+                  <Link href={`/admin/chatbot-logs/${c.id}`} className="text-green-600 hover:underline dark:text-green-400">
                     {c.title}
                   </Link>
                 </td>

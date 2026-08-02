@@ -16,7 +16,7 @@ export function MedicationCard({ medication }: { medication: MedicationSummary }
   return (
     <Link
       href={`/medications/${medication.id}`}
-      className="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-colors hover:border-teal-300 dark:border-zinc-800 dark:bg-zinc-900"
+      className="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-colors hover:border-green-300 dark:border-zinc-800 dark:bg-zinc-900"
     >
       <div className="flex items-start justify-between gap-2">
         <div>

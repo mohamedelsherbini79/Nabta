@@ -39,13 +39,13 @@ export default async function PublicDoctorSharePage({ params }: { params: Promis
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl bg-teal-600 px-4 py-3 text-center text-white">
+      <div className="rounded-xl bg-green-600 px-4 py-3 text-center text-white">
         <p className="text-sm font-medium uppercase tracking-wide">
           <TranslatedText k="shareProfile.public.banner" />
         </p>
         <p className="mt-1 text-2xl font-bold">{data.displayName}</p>
         {data.expiresAt && (
-          <p className="mt-1 text-xs text-teal-100">
+          <p className="mt-1 text-xs text-green-100">
             <TranslatedText k="shareProfile.public.expiresAt" /> {new Date(data.expiresAt).toLocaleString()}
           </p>
         )}

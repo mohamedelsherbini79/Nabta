@@ -27,7 +27,7 @@ const TYPE_LABEL_KEYS: Record<VitalsType, string> = {
 
 const LEVEL_CLASSES: Record<VitalRangeLevel, string> = {
   LOW: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
-  NORMAL: "bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-200",
+  NORMAL: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200",
   ELEVATED: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200",
   HIGH: "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-200",
   CRITICAL: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200",
@@ -86,7 +86,7 @@ export function VitalsDashboard({
             onClick={() => setActiveType(type)}
             className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
               activeType === type
-                ? "bg-teal-600 text-white"
+                ? "bg-green-600 text-white"
                 : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
             }`}
           >

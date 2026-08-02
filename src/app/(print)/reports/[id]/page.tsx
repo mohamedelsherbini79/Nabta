@@ -45,7 +45,7 @@ export default async function ReportPrintPage({ params }: { params: Promise<{ id
         <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
           <TranslatedText k="reports.print.healthScore" />
         </h2>
-        <p className="mb-3 text-3xl font-semibold text-teal-600 dark:text-teal-400">{snapshot.healthScore.score}</p>
+        <p className="mb-3 text-3xl font-semibold text-green-600 dark:text-green-400">{snapshot.healthScore.score}</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {BREAKDOWN_KEYS.map((key) => (
             <div key={key}>

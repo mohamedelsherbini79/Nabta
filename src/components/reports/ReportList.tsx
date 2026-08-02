@@ -45,7 +45,7 @@ export function ReportList({ reports }: { reports: ReportSummary[] }) {
             <Link
               href={`/reports/${report.id}`}
               target="_blank"
-              className="text-xs font-medium text-teal-600 hover:underline dark:text-teal-400"
+              className="text-xs font-medium text-green-600 hover:underline dark:text-green-400"
             >
               {t("reports.view")}
             </Link>

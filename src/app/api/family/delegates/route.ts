@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     .sendEmail({
       to: parsed.data.email,
       subject: `${user.name ?? "Someone"} invited you to their family health group`,
-      html: `<p>${user.name ?? "Someone"} (${user.email}) invited you to help manage their family's health on AI Consultation Platform.</p><p>Log in and visit <a href="${appBaseUrl}/profile/family">Family Mode</a> to accept.</p>`,
+      html: `<p>${user.name ?? "Someone"} (${user.email}) invited you to help manage their family's health on Nabta.</p><p>Log in and visit <a href="${appBaseUrl}/profile/family">Family Mode</a> to accept.</p>`,
     })
     .catch((err) => console.error("Delegate invite email failed:", err));
 

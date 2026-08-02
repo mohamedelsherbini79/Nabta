@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-cairo);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,7 +22,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), "Segoe UI", Tahoma, Arial, sans-serif;
+  font-family: var(--font-cairo), "Segoe UI", Tahoma, Arial, sans-serif;
+  line-height: 1.6;
   /* Keep content clear of notches/home-indicators when installed as a PWA
      (viewportFit: "cover" in layout.tsx opts into the unsafe full-bleed area). */
   padding-top: env(safe-area-inset-top);

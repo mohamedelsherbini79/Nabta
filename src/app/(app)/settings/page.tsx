@@ -37,7 +37,7 @@ export default async function SettingsPage() {
         </h2>
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           <TranslatedText k="settings.notifications.note" />{" "}
-          <Link href="/reminders" className="text-teal-600 hover:underline dark:text-teal-400">
+          <Link href="/reminders" className="text-green-600 hover:underline dark:text-green-400">
             <TranslatedText k="settings.notifications.link" />
           </Link>
         </p>

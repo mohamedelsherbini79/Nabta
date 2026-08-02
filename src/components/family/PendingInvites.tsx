@@ -21,12 +21,12 @@ export function PendingInvites({ invites }: { invites: PendingInviteSummary[] })
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-900 dark:bg-teal-950">
-      <h3 className="text-sm font-medium text-teal-900 dark:text-teal-200">{t("family.pendingInvites.title")}</h3>
+    <div className="flex flex-col gap-2 rounded-xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950">
+      <h3 className="text-sm font-medium text-green-900 dark:text-green-200">{t("family.pendingInvites.title")}</h3>
       <ul className="flex flex-col gap-2">
         {invites.map((invite) => (
           <li key={invite.id} className="flex items-center justify-between gap-2">
-            <p className="text-sm text-teal-900 dark:text-teal-200">
+            <p className="text-sm text-green-900 dark:text-green-200">
               {t("family.pendingInvites.invitedBy")} {invite.familyOwnerName} ·{" "}
               {t(`family.scope.${invite.scope.toLowerCase()}`)}
             </p>

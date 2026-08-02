@@ -166,7 +166,7 @@ export function AddMedicationFlow({ patientProfileId }: { patientProfileId: stri
             <button
               type="button"
               onClick={() => setUseCustomName(true)}
-              className="font-medium text-teal-600 hover:underline"
+              className="font-medium text-green-600 hover:underline"
             >
               {t("medications.add.customNameToggle")}
             </button>
@@ -249,7 +249,7 @@ export function AddMedicationFlow({ patientProfileId }: { patientProfileId: stri
                 setUseCustomName(false);
                 setCustomName("");
               }}
-              className="text-xs text-teal-600 hover:underline"
+              className="text-xs text-green-600 hover:underline"
             >
               {t("medications.detail.editButton")}
             </button>

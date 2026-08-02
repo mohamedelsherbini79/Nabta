@@ -65,7 +65,7 @@ export function NotificationBell() {
                   <button
                     type="button"
                     onClick={() => handleMarkRead(r.receiptId)}
-                    className="mt-1 text-xs text-teal-600 hover:underline dark:text-teal-400"
+                    className="mt-1 text-xs text-green-600 hover:underline dark:text-green-400"
                   >
                     {t("notifications.bell.markRead")}
                   </button>

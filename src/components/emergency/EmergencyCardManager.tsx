@@ -80,7 +80,7 @@ export function EmergencyCardManager({
       <div className="flex flex-wrap gap-3">
         {SCOPE_FIELDS.map((field) => (
           <label key={field} className="flex items-center gap-1.5 text-sm text-zinc-700 dark:text-zinc-300">
-            <input type="checkbox" checked={scope[field]} onChange={() => toggleField(field)} className="accent-teal-600" />
+            <input type="checkbox" checked={scope[field]} onChange={() => toggleField(field)} className="accent-green-600" />
             {t(`emergencyCard.scope.${field}`)}
           </label>
         ))}

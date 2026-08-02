@@ -60,11 +60,11 @@ export function SeverityTrendChart({ logs }: { logs: SymptomLogSummary[] }) {
       ))}
 
       {points.length > 1 && (
-        <path d={pathD} fill="none" stroke="#0d9488" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={pathD} fill="none" stroke="#16a34a" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
       )}
 
       {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={4} fill="#0d9488">
+        <circle key={i} cx={p.x} cy={p.y} r={4} fill="#16a34a">
           <title>
             {(p.log.medications.length > 0
               ? timeFormatter.format(new Date(p.log.loggedAt))

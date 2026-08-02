@@ -134,6 +134,10 @@ model PatientProfile {
   loyaltyPoints       LoyaltyPointsLedger[]
   prescriptions       Prescription[]
   pharmacyOrders      PharmacyOrder[]
+  geneticProfile      GeneticProfile?
+  moodEntries         MoodEntry[]
+  insurancePolicies   InsurancePolicy[]
+  pregnancyRecords    PregnancyRecord[]
 
   @@index([familyGroupId])
 }
@@ -702,4 +706,84 @@ model NotificationReceipt {
   readAt         DateTime?
 
   @@unique([notificationId, userId])
+}
+
+// ═══════════════════════════════════════════════════════════
+// I. Genetics, Mental Health, Health Map & Insurance
+// ═══════════════════════════════════════════════════════════
+
+model GeneticProfile {
+  id               String         @id @default(cuid())
+  patientProfileId String         @unique
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  source           String // 23ANDME | ANCESTRYDNA | VCF | MANUAL
+  variants         Json // [{ gene, phenotype, rsid? }]
+  uploadedAt       DateTime       @default(now())
+}
+
+model MoodEntry {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  mood             String // TERRIBLE | BAD | NEUTRAL | GOOD | EXCELLENT
+  sleepHours       Float?
+  stressLevel      Int? // 1-10
+  note             String?
+  loggedAt         DateTime       @default(now())
+
+  @@index([patientProfileId, loggedAt])
+}
+
+model HealthFacility {
+  id      String  @id @default(cuid())
+  name    String
+  type    String // HOSPITAL | CLINIC | PHARMACY | LAB
+  city    String
+  address String
+  phone   String?
+  lat     Float?
+  lng     Float?
+
+  @@index([city, type])
+}
+
+model InsurancePolicy {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  provider         String
+  policyNumber     String
+  memberId         String?
+  planType         String?
+  expiryDate       DateTime?
+  createdAt        DateTime       @default(now())
+
+  claims InsuranceClaim[]
+
+  @@index([patientProfileId])
+}
+
+model InsuranceClaim {
+  id          String          @id @default(cuid())
+  policyId    String
+  policy      InsurancePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  description String
+  amount      Float
+  status      String          @default("SUBMITTED") // SUBMITTED | APPROVED | REJECTED | PAID
+  submittedAt DateTime        @default(now())
+
+  @@index([policyId])
+}
+
+model PregnancyRecord {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  lastPeriodDate   DateTime
+  dueDate          DateTime
+  status           String         @default("ACTIVE") // ACTIVE | COMPLETED
+  notes            String?
+  createdAt        DateTime       @default(now())
+
+  @@index([patientProfileId, status])
 }

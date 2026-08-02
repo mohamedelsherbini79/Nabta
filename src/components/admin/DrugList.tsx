@@ -58,14 +58,14 @@ export function DrugList({ drugs }: { drugs: AdminDrugSummary[] }) {
                 <button
                   type="button"
                   onClick={() => setExpandedId(expandedId === drug.id ? null : drug.id)}
-                  className="text-teal-600 hover:underline dark:text-teal-400"
+                  className="text-green-600 hover:underline dark:text-green-400"
                 >
                   {t("admin.drugs.interactions.title")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditingId(drug.id)}
-                  className="text-teal-600 hover:underline dark:text-teal-400"
+                  className="text-green-600 hover:underline dark:text-green-400"
                 >
                   {t("admin.drugs.edit")}
                 </button>

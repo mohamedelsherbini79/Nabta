@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import type { ReminderChannel, ReminderSummary } from "@/types";
 
 const CHANNEL_BADGE_CLASSES: Record<ReminderChannel, string> = {
-  SMS: "bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-200",
+  SMS: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200",
   VOICE: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
   PUSH: "border border-dashed border-amber-300 bg-transparent text-amber-700 dark:border-amber-800 dark:text-amber-400",
 };
@@ -62,7 +62,7 @@ export function ReminderList({ reminders, now }: { reminders: ReminderSummary[];
             key={reminder.id}
             className={`flex flex-col gap-2 rounded-xl border p-4 shadow-sm transition-colors ${
               reminder.active
-                ? "border-zinc-200 bg-white hover:border-teal-300 dark:border-zinc-800 dark:bg-zinc-900"
+                ? "border-zinc-200 bg-white hover:border-green-300 dark:border-zinc-800 dark:bg-zinc-900"
                 : "border-zinc-200 bg-zinc-50 opacity-60 dark:border-zinc-800 dark:bg-zinc-950"
             }`}
           >

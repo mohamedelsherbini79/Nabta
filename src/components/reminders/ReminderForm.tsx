@@ -14,7 +14,7 @@ const CHANNEL_OPTIONS: ReminderChannel[] = ["SMS", "VOICE", "PUSH"];
 const RECURRENCE_OPTIONS = ["NONE", "DAILY", "WEEKLY", "MONTHLY"] as const;
 
 const SELECT_CLASSES =
-  "rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
+  "rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
 
 export function ReminderForm({ patientProfileId, phone }: { patientProfileId: string; phone: string | null }) {
   const { t } = useTranslation();
@@ -135,7 +135,7 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
                 onClick={() => setChannel(option)}
                 className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                   isSelected
-                    ? "bg-teal-600 text-white"
+                    ? "bg-green-600 text-white"
                     : isUnavailable
                       ? "border border-dashed border-zinc-300 text-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-500 dark:hover:bg-zinc-800"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
@@ -175,7 +175,7 @@ export function ReminderForm({ patientProfileId, phone }: { patientProfileId: st
           {submitting && <Spinner className="h-4 w-4" />}
           {submitting ? t("reminders.submitting") : t("reminders.submit")}
         </Button>
-        {justAdded && <span className="text-sm text-teal-600 dark:text-teal-400">{t("reminders.success")}</span>}
+        {justAdded && <span className="text-sm text-green-600 dark:text-green-400">{t("reminders.success")}</span>}
       </div>
     </Card>
   );

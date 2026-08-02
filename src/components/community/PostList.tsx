@@ -55,7 +55,7 @@ export function PostList({
           <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300">{post.content}</p>
           <Link
             href={`/community/${groupId}/posts/${post.id}`}
-            className="mt-2 inline-block text-xs text-teal-600 hover:underline dark:text-teal-400"
+            className="mt-2 inline-block text-xs text-green-600 hover:underline dark:text-green-400"
           >
             {post.commentCount} {t("community.commentsLabel")}
           </Link>
