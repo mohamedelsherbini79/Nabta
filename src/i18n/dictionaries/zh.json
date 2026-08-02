@@ -41,7 +41,7 @@
   "pharmacistChat.emptyState.subtitle": "我可以提供关于药物相互作用、副作用和非处方药选择的一般信息。这是一个 AI 助手，不是持证药剂师。",
   "pharmacistChat.disclaimer": "这是一个 AI 助手，不是持证药剂师。它仅提供一般用药信息，不能替代真正药剂师或医生的建议。",
   "disclaimer.banner": "本助手仅提供一般医疗信息，不能替代专业医疗建议、诊断或治疗。请务必就您的健康状况咨询持证医生。",
-  "emergency.banner": "如果您正经历医疗紧急情况（胸痛、呼吸困难、严重出血、失去意识、自残念头等），请立即拨打急救电话（在埃及为123）或前往最近的急诊室。",
+  "emergency.banner": "如果您正经历医疗紧急情况（胸痛、呼吸困难、严重出血、失去意识、自残念头等），请立即拨打急救电话（在{country}为{number}）或前往最近的急诊室。",
   "common.loading": "加载中...",
   "common.error": "出了点问题。",
   "common.retry": "重试",
@@ -792,5 +792,12 @@
   "pregnancy.saveNotes": "保存备注",
   "pregnancy.markComplete": "标记为已完成",
   "pregnancy.delete": "删除",
-  "pregnancy.disclaimer": "仅供参考——不能替代医生或助产士的专业护理。"
+  "pregnancy.disclaimer": "仅供参考——不能替代医生或助产士的专业护理。",
+  "country.eg": "埃及",
+  "country.ae": "阿拉伯联合酋长国",
+  "settings.country.title": "国家",
+  "settings.country.label": "国家",
+  "settings.country.error": "无法保存您的国家偏好设置，请重试。",
+  "insurance.providerOther": "其他",
+  "insurance.providerOtherLabel": "保险公司名称"
 }

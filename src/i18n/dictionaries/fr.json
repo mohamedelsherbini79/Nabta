@@ -41,7 +41,7 @@
   "pharmacistChat.emptyState.subtitle": "Je peux partager des informations générales sur les interactions médicamenteuses, les effets secondaires et les options en vente libre. Ceci est un assistant IA, pas un pharmacien agréé.",
   "pharmacistChat.disclaimer": "Ceci est un assistant IA, pas un pharmacien agréé. Il fournit uniquement des informations générales sur les médicaments et ne remplace pas l'avis d'un vrai pharmacien ou médecin.",
   "disclaimer.banner": "Cet assistant fournit uniquement des informations médicales générales et ne remplace pas un avis médical, un diagnostic ou un traitement professionnel. Consultez toujours un médecin agréé au sujet de votre santé.",
-  "emergency.banner": "Si vous êtes confronté à une urgence médicale (douleur thoracique, difficulté à respirer, saignement important, perte de conscience, pensées d'automutilation, etc.), appelez immédiatement les services d'urgence (123 en Égypte) ou rendez-vous aux urgences les plus proches.",
+  "emergency.banner": "Si vous êtes confronté à une urgence médicale (douleur thoracique, difficulté à respirer, saignement important, perte de conscience, pensées d'automutilation, etc.), appelez immédiatement les services d'urgence ({number} en {country}) ou rendez-vous aux urgences les plus proches.",
   "common.loading": "Chargement...",
   "common.error": "Une erreur s'est produite.",
   "common.retry": "Réessayer",
@@ -792,5 +792,12 @@
   "pregnancy.saveNotes": "Enregistrer les notes",
   "pregnancy.markComplete": "Marquer comme terminé",
   "pregnancy.delete": "Supprimer",
-  "pregnancy.disclaimer": "À titre informatif uniquement — ne remplace pas les soins de votre médecin ou sage-femme."
+  "pregnancy.disclaimer": "À titre informatif uniquement — ne remplace pas les soins de votre médecin ou sage-femme.",
+  "country.eg": "Égypte",
+  "country.ae": "Émirats arabes unis",
+  "settings.country.title": "Pays",
+  "settings.country.label": "Pays",
+  "settings.country.error": "Impossible d'enregistrer votre préférence de pays. Veuillez réessayer.",
+  "insurance.providerOther": "Autre",
+  "insurance.providerOtherLabel": "Nom de la compagnie d'assurance"
 }

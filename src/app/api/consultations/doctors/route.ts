@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserFromRequest } from "@/lib/session";
 import { getDemoDoctors, toDoctorSummary } from "@/lib/consultations";
+import { getCountryFromCookies } from "@/country/getCountryServer";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "unauthorized", message: "Not signed in." }, { status: 401 });
   }
 
-  const doctors = await getDemoDoctors();
+  const country = await getCountryFromCookies();
+  const doctors = await getDemoDoctors(country);
   return NextResponse.json({ doctors: doctors.map(toDoctorSummary) });
 }

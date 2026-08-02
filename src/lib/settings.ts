@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import type { Locale } from "@/i18n/locale";
+import type { CountryCode } from "@/country/country";
 
 export async function updateUserProfile(
   userId: string,
@@ -22,6 +23,10 @@ export async function updateUserProfile(
 
 export function updateUserLocale(userId: string, preferredLocale: Locale) {
   return prisma.user.update({ where: { id: userId }, data: { preferredLocale } });
+}
+
+export function updateUserCountry(userId: string, preferredCountry: CountryCode) {
+  return prisma.user.update({ where: { id: userId }, data: { preferredCountry } });
 }
 
 export async function changeUserPassword(

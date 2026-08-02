@@ -68,7 +68,9 @@ model User {
   phoneVerifiedAt DateTime?
   role            Role      @default(PATIENT)
   specialty       String? // set for role: DOCTOR, e.g. "Cardiology"
+  practicingCountry String? // set for role: DOCTOR — EG | AE — which country's patients they're shown to
   preferredLocale String    @default("ar")
+  preferredCountry String   @default("EG") // EG | AE — which country's data (facilities, doctors, currency) this user views
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -738,13 +740,14 @@ model HealthFacility {
   id      String  @id @default(cuid())
   name    String
   type    String // HOSPITAL | CLINIC | PHARMACY | LAB
+  country String @default("EG") // EG | AE
   city    String
   address String
   phone   String?
   lat     Float?
   lng     Float?
 
-  @@index([city, type])
+  @@index([country, city, type])
 }
 
 model InsurancePolicy {

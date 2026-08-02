@@ -4,9 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { ProfileForm } from "@/components/settings/ProfileForm";
 import { LanguageForm } from "@/components/settings/LanguageForm";
+import { CountryForm } from "@/components/settings/CountryForm";
 import { PasswordForm } from "@/components/settings/PasswordForm";
 import { InstallAppButton } from "@/components/settings/InstallAppButton";
 import { isSupportedLocale, DEFAULT_LOCALE } from "@/i18n/locale";
+import { isSupportedCountry, DEFAULT_COUNTRY } from "@/country/country";
 
 export default async function SettingsPage() {
   const sessionUser = await requireUser();
@@ -14,6 +16,7 @@ export default async function SettingsPage() {
   if (!user) return null;
 
   const preferredLocale = isSupportedLocale(user.preferredLocale) ? user.preferredLocale : DEFAULT_LOCALE;
+  const preferredCountry = isSupportedCountry(user.preferredCountry) ? user.preferredCountry : DEFAULT_COUNTRY;
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 sm:p-6">
@@ -28,6 +31,7 @@ export default async function SettingsPage() {
 
       <ProfileForm initialName={user.name ?? ""} email={user.email} initialPhone={user.phone ?? ""} />
       <LanguageForm initialLocale={preferredLocale} />
+      <CountryForm initialCountry={preferredCountry} />
       <PasswordForm />
       <InstallAppButton />
 

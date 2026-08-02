@@ -41,7 +41,7 @@
   "pharmacistChat.emptyState.subtitle": "Puedo compartir información general sobre interacciones, efectos secundarios y opciones sin receta. Este es un asistente de IA, no un farmacéutico con licencia.",
   "pharmacistChat.disclaimer": "Este es un asistente de IA, no un farmacéutico con licencia. Ofrece solo información general sobre medicamentos y no sustituye el consejo de un farmacéutico o médico real.",
   "disclaimer.banner": "Este asistente proporciona únicamente información médica general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional. Consulta siempre a un médico con licencia sobre tu salud.",
-  "emergency.banner": "Si tienes una emergencia médica (dolor en el pecho, dificultad para respirar, sangrado severo, pérdida de conciencia, pensamientos de autolesión, etc.), llama a los servicios de emergencia de inmediato (123 en Egipto) o acude a la sala de emergencias más cercana.",
+  "emergency.banner": "Si tienes una emergencia médica (dolor en el pecho, dificultad para respirar, sangrado severo, pérdida de conciencia, pensamientos de autolesión, etc.), llama a los servicios de emergencia de inmediato ({number} en {country}) o acude a la sala de emergencias más cercana.",
   "common.loading": "Cargando...",
   "common.error": "Algo salió mal.",
   "common.retry": "Reintentar",
@@ -792,5 +792,12 @@
   "pregnancy.saveNotes": "Guardar notas",
   "pregnancy.markComplete": "Marcar como completado",
   "pregnancy.delete": "Eliminar",
-  "pregnancy.disclaimer": "Solo con fines informativos — no sustituye la atención de tu médico o partera."
+  "pregnancy.disclaimer": "Solo con fines informativos — no sustituye la atención de tu médico o partera.",
+  "country.eg": "Egipto",
+  "country.ae": "Emiratos Árabes Unidos",
+  "settings.country.title": "País",
+  "settings.country.label": "País",
+  "settings.country.error": "No se pudo guardar tu preferencia de país. Inténtalo de nuevo.",
+  "insurance.providerOther": "Otra",
+  "insurance.providerOtherLabel": "Nombre de la aseguradora"
 }

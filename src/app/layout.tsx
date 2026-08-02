@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { Cairo, Geist_Mono } from "next/font/google";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { DEFAULT_LOCALE, isSupportedLocale } from "@/i18n/locale";
+import { CountryProvider } from "@/country/CountryProvider";
+import { DEFAULT_COUNTRY, isSupportedCountry } from "@/country/country";
 import { ServiceWorkerRegister } from "@/components/layout/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -48,6 +50,8 @@ export default async function RootLayout({
   const cookieLocale = cookieStore.get("locale")?.value;
   const locale = isSupportedLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
   const dir = locale === "ar" ? "rtl" : "ltr";
+  const cookieCountry = cookieStore.get("country")?.value;
+  const country = isSupportedCountry(cookieCountry) ? cookieCountry : DEFAULT_COUNTRY;
 
   return (
     <html
@@ -57,7 +61,9 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegister />
-        <I18nProvider locale={locale}>{children}</I18nProvider>
+        <CountryProvider country={country}>
+          <I18nProvider locale={locale}>{children}</I18nProvider>
+        </CountryProvider>
       </body>
     </html>
   );

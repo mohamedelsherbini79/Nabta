@@ -1,5 +1,6 @@
 import { getSessionUser } from "@/lib/session";
 import { getFacilityCities, searchFacilities, toHealthFacilitySummary } from "@/lib/healthMap";
+import { getCountryFromCookies } from "@/country/getCountryServer";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { FacilitySearch } from "@/components/healthMap/FacilitySearch";
 
@@ -7,7 +8,8 @@ export default async function HealthMapPage() {
   const user = await getSessionUser();
   if (!user) return null;
 
-  const [facilities, cityRows] = await Promise.all([searchFacilities({}), getFacilityCities()]);
+  const country = await getCountryFromCookies();
+  const [facilities, cityRows] = await Promise.all([searchFacilities(country, {}), getFacilityCities(country)]);
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 sm:p-6">

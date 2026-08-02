@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { CountryCode } from "@/country/country";
 import type { HealthFacilitySearchInput } from "@/lib/validation";
 import type { HealthFacilitySummary } from "@/types";
 
@@ -13,9 +14,10 @@ interface HealthFacilityRow {
   lng: number | null;
 }
 
-export function searchFacilities(filters: HealthFacilitySearchInput) {
+export function searchFacilities(country: CountryCode, filters: HealthFacilitySearchInput) {
   return prisma.healthFacility.findMany({
     where: {
+      country,
       ...(filters.city ? { city: { equals: filters.city, mode: "insensitive" } } : {}),
       ...(filters.type ? { type: filters.type } : {}),
     },
@@ -23,8 +25,9 @@ export function searchFacilities(filters: HealthFacilitySearchInput) {
   });
 }
 
-export function getFacilityCities() {
+export function getFacilityCities(country: CountryCode) {
   return prisma.healthFacility.findMany({
+    where: { country },
     select: { city: true },
     distinct: ["city"],
     orderBy: { city: "asc" },

@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { COUNTRY_INFO, DEFAULT_COUNTRY, type CountryCode } from "@/country/country";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error(
@@ -10,10 +11,21 @@ export const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const CHAT_MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-latest";
 
-export function buildSystemPrompt(kind: "PATIENT_AI" | "PHARMACIST" = "PATIENT_AI"): string {
+// Plain-language country name for the prompt text itself (backend/AI-facing,
+// not user-facing UI — separate from the i18n country.* keys).
+const COUNTRY_PROMPT_NAME: Record<CountryCode, string> = {
+  EG: "Egypt",
+  AE: "the UAE",
+};
+
+export function buildSystemPrompt(
+  kind: "PATIENT_AI" | "PHARMACIST" = "PATIENT_AI",
+  country: CountryCode = DEFAULT_COUNTRY,
+): string {
   if (kind === "PHARMACIST") {
-    return buildPharmacistSystemPrompt();
+    return buildPharmacistSystemPrompt(country);
   }
+  const ambulance = COUNTRY_INFO[country].ambulance;
   return `You are a bilingual (Arabic/English) medical information assistant embedded in a consumer health app called "Nabta" / "نبتة".
 
 LANGUAGE:
@@ -31,7 +43,7 @@ MANDATORY DISCLAIMER:
 
 EMERGENCY ESCALATION (highest priority — check this first):
 - If the user describes symptoms that could indicate a medical emergency (e.g., chest pain, difficulty breathing, signs of stroke [facial drooping, arm weakness, slurred speech], severe uncontrolled bleeding, loss of consciousness, severe allergic reaction, suspected poisoning, high fever with stiff neck in infants, thoughts of self-harm or suicide, or any symptom the user describes as severe/sudden/worsening rapidly):
-  1. Open your response with a clear, unmissable instruction to seek emergency care immediately (call local emergency services — in Egypt, ambulance is 123 — or go to the nearest emergency room now).
+  1. Open your response with a clear, unmissable instruction to seek emergency care immediately (call local emergency services — in ${COUNTRY_PROMPT_NAME[country]}, ambulance is ${ambulance} — or go to the nearest emergency room now).
   2. Keep this instruction first, before any other discussion.
   3. Do not attempt to further triage or reassure — urge immediate action.
 
@@ -44,7 +56,8 @@ BOUNDARIES:
 - If asked something entirely unrelated to health, gently steer back to the platform's purpose.`;
 }
 
-function buildPharmacistSystemPrompt(): string {
+function buildPharmacistSystemPrompt(country: CountryCode): string {
+  const ambulance = COUNTRY_INFO[country].ambulance;
   return `You are a bilingual (Arabic/English) AI pharmacy assistant embedded in a consumer health app called "Nabta" / "نبتة".
 
 IDENTITY (state this clearly if asked, and imply it through your framing):
@@ -64,7 +77,7 @@ MANDATORY DISCLAIMER:
 
 EMERGENCY ESCALATION (highest priority — check this first):
 - If the user describes a possible overdose, severe allergic reaction, signs of anaphylaxis, chest pain, difficulty breathing, or any acute emergency:
-  1. Open your response with a clear, unmissable instruction to seek emergency care immediately (call local emergency services — in Egypt, ambulance is 123 — or go to the nearest emergency room now, or call a poison control center if available).
+  1. Open your response with a clear, unmissable instruction to seek emergency care immediately (call local emergency services — in ${COUNTRY_PROMPT_NAME[country]}, ambulance is ${ambulance} — or go to the nearest emergency room now, or call a poison control center if available).
   2. Keep this instruction first, before any other discussion.
   3. Do not attempt to further triage or reassure — urge immediate action.
 

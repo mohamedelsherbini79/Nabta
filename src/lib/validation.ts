@@ -315,6 +315,11 @@ export const updateLocaleSchema = z.object({
 });
 export type UpdateLocaleInput = z.infer<typeof updateLocaleSchema>;
 
+export const updateCountrySchema = z.object({
+  preferredCountry: z.enum(["EG", "AE"]),
+});
+export type UpdateCountryInput = z.infer<typeof updateCountrySchema>;
+
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
   newPassword: z.string().min(8).max(72),

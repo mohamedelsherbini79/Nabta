@@ -99,12 +99,16 @@ interface DoctorSeed {
   name: string;
   email: string;
   specialty: string;
+  country: "EG" | "AE";
 }
 
 const doctors: DoctorSeed[] = [
-  { name: "Dr. Sara Ahmed", email: "dr.sara.ahmed@demo.local", specialty: "General Medicine" },
-  { name: "Dr. Omar Khalil", email: "dr.omar.khalil@demo.local", specialty: "Cardiology" },
-  { name: "Dr. Layla Mansour", email: "dr.layla.mansour@demo.local", specialty: "Pediatrics" },
+  { name: "Dr. Sara Ahmed", email: "dr.sara.ahmed@demo.local", specialty: "General Medicine", country: "EG" },
+  { name: "Dr. Omar Khalil", email: "dr.omar.khalil@demo.local", specialty: "Cardiology", country: "EG" },
+  { name: "Dr. Layla Mansour", email: "dr.layla.mansour@demo.local", specialty: "Pediatrics", country: "EG" },
+  { name: "Dr. Fatima Al Suwaidi", email: "dr.fatima.alsuwaidi@demo.local", specialty: "General Medicine", country: "AE" },
+  { name: "Dr. Khalid Al Marzooqi", email: "dr.khalid.almarzooqi@demo.local", specialty: "Cardiology", country: "AE" },
+  { name: "Dr. Noura Al Shamsi", email: "dr.noura.alshamsi@demo.local", specialty: "Pediatrics", country: "AE" },
 ];
 
 async function seedDoctors() {
@@ -121,6 +125,7 @@ async function seedDoctors() {
         email: doctor.email,
         name: doctor.name,
         specialty: doctor.specialty,
+        practicingCountry: doctor.country,
         role: "DOCTOR",
         passwordHash,
       },
@@ -207,6 +212,7 @@ async function seedCommunityGroups() {
 interface HealthFacilitySeed {
   name: string;
   type: "HOSPITAL" | "CLINIC" | "PHARMACY" | "LAB";
+  country: "EG" | "AE";
   city: string;
   address: string;
   phone?: string;
@@ -215,19 +221,35 @@ interface HealthFacilitySeed {
 }
 
 const healthFacilities: HealthFacilitySeed[] = [
-  { name: "Qasr Al Ainy Hospital", type: "HOSPITAL", city: "Cairo", address: "Al Manial, Cairo", phone: "+20223684500", lat: 30.0295, lng: 31.2296 },
-  { name: "Dar Al Fouad Hospital", type: "HOSPITAL", city: "Giza", address: "6th of October City, Giza", phone: "+20238281000", lat: 29.9679, lng: 30.9153 },
-  { name: "Alexandria Main University Hospital", type: "HOSPITAL", city: "Alexandria", address: "Al Khartoum St, Alexandria", phone: "+20342865766", lat: 31.2001, lng: 29.9187 },
-  { name: "As-Salam International Hospital", type: "HOSPITAL", city: "Cairo", address: "Corniche El Nil, Maadi, Cairo", phone: "+20225240250", lat: 29.9601, lng: 31.2569 },
-  { name: "Nabta Family Clinic", type: "CLINIC", city: "Cairo", address: "Mohandessin, Cairo", phone: "+20233456789", lat: 30.0571, lng: 31.2001 },
-  { name: "Al Salam Polyclinic", type: "CLINIC", city: "Giza", address: "Dokki, Giza", phone: "+20237601122", lat: 30.0378, lng: 31.2119 },
-  { name: "Smouha Medical Center", type: "CLINIC", city: "Alexandria", address: "Smouha, Alexandria", phone: "+20342221100", lat: 31.2156, lng: 29.9553 },
-  { name: "Seif Pharmacy", type: "PHARMACY", city: "Cairo", address: "Zamalek, Cairo", phone: "+20227351234", lat: 30.0626, lng: 31.2219 },
-  { name: "El Ezaby Pharmacy", type: "PHARMACY", city: "Giza", address: "Haram St, Giza", phone: "+20233851234", lat: 29.9887, lng: 31.1342 },
-  { name: "Roshdy Pharmacy", type: "PHARMACY", city: "Alexandria", address: "Roshdy, Alexandria", phone: "+20342456789", lat: 31.2258, lng: 29.9548 },
-  { name: "Al Borg Laboratories", type: "LAB", city: "Cairo", address: "Nasr City, Cairo", phone: "+20222741234", lat: 30.0626, lng: 31.3467 },
-  { name: "Alfa Lab", type: "LAB", city: "Giza", address: "6th of October City, Giza", phone: "+20238331234", lat: 29.9757, lng: 30.9296 },
-  { name: "Biolab Alexandria", type: "LAB", city: "Alexandria", address: "Sidi Gaber, Alexandria", phone: "+20342781234", lat: 31.2247, lng: 29.9505 },
+  // Egypt
+  { name: "Qasr Al Ainy Hospital", type: "HOSPITAL", country: "EG", city: "Cairo", address: "Al Manial, Cairo", phone: "+20223684500", lat: 30.0295, lng: 31.2296 },
+  { name: "Dar Al Fouad Hospital", type: "HOSPITAL", country: "EG", city: "Giza", address: "6th of October City, Giza", phone: "+20238281000", lat: 29.9679, lng: 30.9153 },
+  { name: "Alexandria Main University Hospital", type: "HOSPITAL", country: "EG", city: "Alexandria", address: "Al Khartoum St, Alexandria", phone: "+20342865766", lat: 31.2001, lng: 29.9187 },
+  { name: "As-Salam International Hospital", type: "HOSPITAL", country: "EG", city: "Cairo", address: "Corniche El Nil, Maadi, Cairo", phone: "+20225240250", lat: 29.9601, lng: 31.2569 },
+  { name: "Nabta Family Clinic", type: "CLINIC", country: "EG", city: "Cairo", address: "Mohandessin, Cairo", phone: "+20233456789", lat: 30.0571, lng: 31.2001 },
+  { name: "Al Salam Polyclinic", type: "CLINIC", country: "EG", city: "Giza", address: "Dokki, Giza", phone: "+20237601122", lat: 30.0378, lng: 31.2119 },
+  { name: "Smouha Medical Center", type: "CLINIC", country: "EG", city: "Alexandria", address: "Smouha, Alexandria", phone: "+20342221100", lat: 31.2156, lng: 29.9553 },
+  { name: "Seif Pharmacy", type: "PHARMACY", country: "EG", city: "Cairo", address: "Zamalek, Cairo", phone: "+20227351234", lat: 30.0626, lng: 31.2219 },
+  { name: "El Ezaby Pharmacy", type: "PHARMACY", country: "EG", city: "Giza", address: "Haram St, Giza", phone: "+20233851234", lat: 29.9887, lng: 31.1342 },
+  { name: "Roshdy Pharmacy", type: "PHARMACY", country: "EG", city: "Alexandria", address: "Roshdy, Alexandria", phone: "+20342456789", lat: 31.2258, lng: 29.9548 },
+  { name: "Al Borg Laboratories", type: "LAB", country: "EG", city: "Cairo", address: "Nasr City, Cairo", phone: "+20222741234", lat: 30.0626, lng: 31.3467 },
+  { name: "Alfa Lab", type: "LAB", country: "EG", city: "Giza", address: "6th of October City, Giza", phone: "+20238331234", lat: 29.9757, lng: 30.9296 },
+  { name: "Biolab Alexandria", type: "LAB", country: "EG", city: "Alexandria", address: "Sidi Gaber, Alexandria", phone: "+20342781234", lat: 31.2247, lng: 29.9505 },
+
+  // UAE
+  { name: "Rashid Hospital", type: "HOSPITAL", country: "AE", city: "Dubai", address: "Oud Metha, Dubai", phone: "+97142192000", lat: 25.2367, lng: 55.3103 },
+  { name: "Sheikh Khalifa Medical City", type: "HOSPITAL", country: "AE", city: "Abu Dhabi", address: "Al Karamah St, Abu Dhabi", phone: "+97128191000", lat: 24.4539, lng: 54.3773 },
+  { name: "Al Qassimi Hospital", type: "HOSPITAL", country: "AE", city: "Sharjah", address: "Al Qasimia, Sharjah", phone: "+97165386111", lat: 25.3463, lng: 55.4209 },
+  { name: "American Hospital Dubai", type: "HOSPITAL", country: "AE", city: "Dubai", address: "Oud Metha Rd, Dubai", phone: "+97143077777", lat: 25.2276, lng: 55.3157 },
+  { name: "Aster Clinic", type: "CLINIC", country: "AE", city: "Dubai", address: "Al Barsha, Dubai", phone: "+97143440300", lat: 25.1122, lng: 55.1929 },
+  { name: "NMC Royal Clinic", type: "CLINIC", country: "AE", city: "Abu Dhabi", address: "Khalifa City, Abu Dhabi", phone: "+97125015000", lat: 24.4225, lng: 54.5990 },
+  { name: "Zulekha Clinic", type: "CLINIC", country: "AE", city: "Sharjah", address: "Al Nahda, Sharjah", phone: "+97165588988", lat: 25.3103, lng: 55.3646 },
+  { name: "Life Pharmacy", type: "PHARMACY", country: "AE", city: "Dubai", address: "Jumeirah, Dubai", phone: "+97143452900", lat: 25.2048, lng: 55.2708 },
+  { name: "Aster Pharmacy", type: "PHARMACY", country: "AE", city: "Abu Dhabi", address: "Electra St, Abu Dhabi", phone: "+97126444600", lat: 24.4869, lng: 54.3700 },
+  { name: "Boots Pharmacy", type: "PHARMACY", country: "AE", city: "Sharjah", address: "Al Majaz, Sharjah", phone: "+97165742222", lat: 25.3268, lng: 55.3826 },
+  { name: "Prime Diagnostic Center", type: "LAB", country: "AE", city: "Dubai", address: "Al Wasl Rd, Dubai", phone: "+97143488688", lat: 25.1972, lng: 55.2464 },
+  { name: "Health Point Diagnostics", type: "LAB", country: "AE", city: "Abu Dhabi", address: "Al Reem Island, Abu Dhabi", phone: "+97124957400", lat: 24.4972, lng: 54.4034 },
+  { name: "Biogenix Labs", type: "LAB", country: "AE", city: "Sharjah", address: "Al Taawun, Sharjah", phone: "+97165727100", lat: 25.3387, lng: 55.3903 },
 ];
 
 async function seedHealthFacilities() {
@@ -242,6 +264,7 @@ async function seedHealthFacilities() {
       data: {
         name: facility.name,
         type: facility.type,
+        country: facility.country,
         city: facility.city,
         address: facility.address,
         phone: facility.phone ?? null,

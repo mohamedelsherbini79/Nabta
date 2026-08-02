@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { gemini, buildSystemPrompt, CHAT_MODEL } from "@/lib/gemini";
 import { chatMessageSchema } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { getCountryFromCookies } from "@/country/getCountryServer";
 
 export const runtime = "nodejs";
 
@@ -64,6 +65,8 @@ export async function POST(req: Request) {
     parts: [{ text: m.content }],
   }));
 
+  const country = await getCountryFromCookies();
+
   let fullText = "";
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
@@ -72,7 +75,7 @@ export async function POST(req: Request) {
         const stream = await gemini.models.generateContentStream({
           model: CHAT_MODEL,
           contents: geminiContents,
-          config: { systemInstruction: buildSystemPrompt(conversation.kind as "PATIENT_AI" | "PHARMACIST") },
+          config: { systemInstruction: buildSystemPrompt(conversation.kind as "PATIENT_AI" | "PHARMACIST", country) },
         });
 
         for await (const chunk of stream) {

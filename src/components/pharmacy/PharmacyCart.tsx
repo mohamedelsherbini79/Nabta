@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { DrugSearchAutocomplete } from "@/components/medications/DrugSearchAutocomplete";
 import { CheckoutForm } from "@/components/pharmacy/CheckoutForm";
+import { useCountry } from "@/country/useCountry";
 import type { PharmacyCartSummary } from "@/types";
 import type { DrugCatalogEntry } from "@/types";
 
 export function PharmacyCart({ patientProfileId, cart }: { patientProfileId: string; cart: PharmacyCartSummary }) {
   const { t } = useTranslation();
+  const { info: countryInfo } = useCountry();
   const router = useRouter();
 
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export function PharmacyCart({ patientProfileId, cart }: { patientProfileId: str
               <li key={item.id} className="flex items-center justify-between gap-3">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{item.tradeName}</p>
-                  <p className="text-xs text-zinc-400">{item.unitPrice} {t("pharmacy.currency")}</p>
+                  <p className="text-xs text-zinc-400">{item.unitPrice} {countryInfo.currency}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -108,7 +110,7 @@ export function PharmacyCart({ patientProfileId, cart }: { patientProfileId: str
         {cart.items.length > 0 && (
           <div className="mt-4 flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              {t("pharmacy.cart.total")}: {cart.total} {t("pharmacy.currency")}
+              {t("pharmacy.cart.total")}: {cart.total} {countryInfo.currency}
             </p>
             {!showCheckout && (
               <Button onClick={() => setShowCheckout(true)} className="!px-3 !py-1.5 text-xs">

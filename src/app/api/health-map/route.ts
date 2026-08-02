@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 import { getFacilityCities, searchFacilities, toHealthFacilitySummary } from "@/lib/healthMap";
+import { getCountryFromCookies } from "@/country/getCountryServer";
 import { healthFacilitySearchSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
 // Global reference data, not patient-scoped — no canAccessProfile check needed.
+// Scoped by the viewer's selected country (cookie) — the country toggle does
+// a full page reload on change, so the cookie is always current by the time
+// this route (or a client re-fetch) runs.
 export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) {
@@ -21,7 +25,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "invalid_input", message: "Invalid search input." }, { status: 400 });
   }
 
-  const [facilities, cityRows] = await Promise.all([searchFacilities(parsed.data), getFacilityCities()]);
+  const country = await getCountryFromCookies();
+  const [facilities, cityRows] = await Promise.all([
+    searchFacilities(country, parsed.data),
+    getFacilityCities(country),
+  ]);
 
   return NextResponse.json({
     facilities: facilities.map(toHealthFacilitySummary),

@@ -41,7 +41,7 @@
   "pharmacistChat.emptyState.subtitle": "I can share general information about drug interactions, side effects, and OTC options. This is an AI assistant, not a licensed pharmacist.",
   "pharmacistChat.disclaimer": "This is an AI assistant, not a licensed pharmacist. It provides general medication information only and is not a substitute for advice from a real pharmacist or doctor.",
   "disclaimer.banner": "This assistant provides general medical information only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a licensed doctor about your health.",
-  "emergency.banner": "If you are experiencing a medical emergency (chest pain, difficulty breathing, severe bleeding, loss of consciousness, thoughts of self-harm, etc.), call emergency services immediately (123 in Egypt) or go to the nearest emergency room.",
+  "emergency.banner": "If you are experiencing a medical emergency (chest pain, difficulty breathing, severe bleeding, loss of consciousness, thoughts of self-harm, etc.), call emergency services immediately ({number} in {country}) or go to the nearest emergency room.",
   "common.loading": "Loading...",
   "common.error": "Something went wrong.",
   "common.retry": "Retry",
@@ -792,5 +792,12 @@
   "pregnancy.saveNotes": "Save notes",
   "pregnancy.markComplete": "Mark as completed",
   "pregnancy.delete": "Delete",
-  "pregnancy.disclaimer": "Informational only — not a substitute for care from your doctor or midwife."
+  "pregnancy.disclaimer": "Informational only — not a substitute for care from your doctor or midwife.",
+  "country.eg": "Egypt",
+  "country.ae": "United Arab Emirates",
+  "settings.country.title": "Country",
+  "settings.country.label": "Country",
+  "settings.country.error": "Could not save your country preference. Please try again.",
+  "insurance.providerOther": "Other",
+  "insurance.providerOtherLabel": "Insurance company name"
 }

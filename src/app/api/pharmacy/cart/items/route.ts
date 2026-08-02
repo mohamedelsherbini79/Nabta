@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/session";
 import { canAccessProfile } from "@/lib/family";
 import { logAudit } from "@/lib/audit";
 import { addItemToCart, toCartSummary } from "@/lib/pharmacy";
+import { getCountryFromCookies } from "@/country/getCountryServer";
 import { pharmacyCartItemSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -31,7 +32,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "not_found", message: "Profile not found." }, { status: 404 });
   }
 
-  const cart = await addItemToCart(patientProfileId, parsed.data.drugCatalogId, parsed.data.quantity);
+  const country = await getCountryFromCookies();
+  const cart = await addItemToCart(patientProfileId, parsed.data.drugCatalogId, parsed.data.quantity, country);
   if (!cart) {
     return NextResponse.json({ error: "not_found", message: "Cart not found." }, { status: 404 });
   }

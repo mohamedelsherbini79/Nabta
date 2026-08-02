@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/useTranslation";
+import { useCountry } from "@/country/useCountry";
 import type { PharmacyOrderSummary } from "@/types";
 
 const STATUS_LABEL_KEYS: Record<PharmacyOrderSummary["status"], string> = {
@@ -23,6 +24,7 @@ export function OrderHistoryList({
   orders: PharmacyOrderSummary[];
 }) {
   const { t, locale } = useTranslation();
+  const { info: countryInfo } = useCountry();
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -93,7 +95,7 @@ export function OrderHistoryList({
             ))}
           </ul>
           <p className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {t("pharmacy.cart.total")}: {order.total} {t("pharmacy.currency")}
+            {t("pharmacy.cart.total")}: {order.total} {countryInfo.currency}
           </p>
         </li>
       ))}

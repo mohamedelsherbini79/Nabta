@@ -1,13 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { videoRoomProvider, type VideoRoom } from "@/lib/video";
+import type { CountryCode } from "@/country/country";
 import type { ConsultationSummary, ConsultationStatus, DoctorConsultationSummary, DoctorSummary } from "@/types";
 
 const SLOT_START_HOUR = 9;
 const SLOT_END_HOUR = 16; // last bookable start time (slot runs 4-5pm)
 const WEEKEND_DAYS = [5, 6]; // Friday, Saturday — regional weekend
 
-export function getDemoDoctors() {
-  return prisma.user.findMany({ where: { role: "DOCTOR" }, orderBy: { name: "asc" } });
+export function getDemoDoctors(country: CountryCode) {
+  return prisma.user.findMany({ where: { role: "DOCTOR", practicingCountry: country }, orderBy: { name: "asc" } });
 }
 
 export async function getConsultationsForProfile(patientProfileId: string) {

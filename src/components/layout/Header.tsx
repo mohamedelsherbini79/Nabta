@@ -1,5 +1,6 @@
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { CountryToggle } from "@/components/layout/CountryToggle";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileMenuButton } from "@/components/layout/MobileMenuButton";
@@ -27,6 +28,7 @@ export async function Header({ userId }: { userId?: string }) {
           <ProfileSwitcher profiles={profiles.map(toFamilyProfileSummary)} activeProfileId={activeProfile?.id ?? ""} />
         )}
         {userId && <NotificationBell />}
+        <CountryToggle />
         <LanguageToggle />
         <LogoutButton />
       </div>

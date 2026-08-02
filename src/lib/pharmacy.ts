@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma/client";
-import { mockDrugPriceEGP } from "@/lib/pharmacyPricing";
+import { mockDrugPrice } from "@/lib/pharmacyPricing";
+import type { CountryCode } from "@/country/country";
 import type { PharmacyDeliveryAddressInput } from "@/lib/validation";
 import type { PharmacyCartItemSummary, PharmacyCartSummary, PharmacyOrderSummary } from "@/types";
 
@@ -24,7 +25,12 @@ export async function getOrCreateCart(patientProfileId: string) {
   });
 }
 
-export async function addItemToCart(patientProfileId: string, drugCatalogId: string, quantity: number) {
+export async function addItemToCart(
+  patientProfileId: string,
+  drugCatalogId: string,
+  quantity: number,
+  country: CountryCode,
+) {
   const cart = await getOrCreateCart(patientProfileId);
   const existingItem = cart.items.find((item) => item.drugCatalogId === drugCatalogId);
 
@@ -39,7 +45,7 @@ export async function addItemToCart(patientProfileId: string, drugCatalogId: str
         pharmacyOrderId: cart.id,
         drugCatalogId,
         quantity,
-        unitPrice: mockDrugPriceEGP(drugCatalogId),
+        unitPrice: mockDrugPrice(drugCatalogId, country),
       },
     });
   }

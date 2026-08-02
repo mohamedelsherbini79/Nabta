@@ -7,12 +7,23 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import { useCountry } from "@/country/useCountry";
+import { INSURANCE_PROVIDERS_BY_COUNTRY } from "@/country/insuranceProviders";
+
+const OTHER_PROVIDER = "__other__";
+
+const SELECT_CLASSES =
+  "rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-green-500 focus:ring-1 focus:ring-green-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
 
 export function PolicyForm({ patientProfileId }: { patientProfileId: string }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const { country } = useCountry();
+  const knownProviders = INSURANCE_PROVIDERS_BY_COUNTRY[country];
 
-  const [provider, setProvider] = useState("");
+  const [providerChoice, setProviderChoice] = useState<string>(knownProviders[0]);
+  const [customProvider, setCustomProvider] = useState("");
+  const provider = providerChoice === OTHER_PROVIDER ? customProvider : providerChoice;
   const [policyNumber, setPolicyNumber] = useState("");
   const [memberId, setMemberId] = useState("");
   const [planType, setPlanType] = useState("");
@@ -47,7 +58,8 @@ export function PolicyForm({ patientProfileId }: { patientProfileId: string }) {
       return;
     }
 
-    setProvider("");
+    setProviderChoice(knownProviders[0]);
+    setCustomProvider("");
     setPolicyNumber("");
     setMemberId("");
     setPlanType("");
@@ -60,12 +72,25 @@ export function PolicyForm({ patientProfileId }: { patientProfileId: string }) {
       <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{t("insurance.form.title")}</h2>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Input
-          id="insuranceProvider"
-          label={t("insurance.providerLabel")}
-          value={provider}
-          onChange={(e) => setProvider(e.target.value)}
-        />
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("insurance.providerLabel")}</label>
+          <select value={providerChoice} onChange={(e) => setProviderChoice(e.target.value)} className={SELECT_CLASSES}>
+            {knownProviders.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+            <option value={OTHER_PROVIDER}>{t("insurance.providerOther")}</option>
+          </select>
+        </div>
+        {providerChoice === OTHER_PROVIDER && (
+          <Input
+            id="insuranceProviderCustom"
+            label={t("insurance.providerOtherLabel")}
+            value={customProvider}
+            onChange={(e) => setCustomProvider(e.target.value)}
+          />
+        )}
         <Input
           id="insurancePolicyNumber"
           label={t("insurance.policyNumberLabel")}

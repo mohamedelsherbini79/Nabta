@@ -6,6 +6,7 @@ import { useTranslation } from "@/i18n/useTranslation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useCountry } from "@/country/useCountry";
 import type { InsuranceClaimStatus, InsurancePolicySummary } from "@/types";
 
 const STATUS_BADGE_CLASSES: Record<InsuranceClaimStatus, string> = {
@@ -72,6 +73,7 @@ function ClaimForm({ policyId, onDone }: { policyId: string; onDone: () => void 
 
 export function PolicyList({ policies }: { policies: InsurancePolicySummary[] }) {
   const { t, locale } = useTranslation();
+  const { info: countryInfo } = useCountry();
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [addingClaimFor, setAddingClaimFor] = useState<string | null>(null);
@@ -136,7 +138,7 @@ export function PolicyList({ policies }: { policies: InsurancePolicySummary[] })
                       <div className="min-w-0">
                         <span className="text-zinc-900 dark:text-zinc-50">{claim.description}</span>
                         <span className="ms-2 text-zinc-500 dark:text-zinc-400">
-                          {amountFormatter.format(claim.amount)} EGP
+                          {amountFormatter.format(claim.amount)} {countryInfo.currency}
                         </span>
                       </div>
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE_CLASSES[claim.status]}`}>
