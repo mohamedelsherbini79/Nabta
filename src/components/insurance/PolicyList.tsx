@@ -77,6 +77,7 @@ export function PolicyList({ policies }: { policies: InsurancePolicySummary[] })
   const [addingClaimFor, setAddingClaimFor] = useState<string | null>(null);
 
   const dateFormatter = new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" });
+  const amountFormatter = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
 
   async function handleDeletePolicy(id: string) {
     setBusyId(id);
@@ -134,7 +135,9 @@ export function PolicyList({ policies }: { policies: InsurancePolicySummary[] })
                     <li key={claim.id} className="flex items-center justify-between gap-2 text-sm">
                       <div className="min-w-0">
                         <span className="text-zinc-900 dark:text-zinc-50">{claim.description}</span>
-                        <span className="ms-2 text-zinc-500 dark:text-zinc-400">${claim.amount.toFixed(2)}</span>
+                        <span className="ms-2 text-zinc-500 dark:text-zinc-400">
+                          {amountFormatter.format(claim.amount)} EGP
+                        </span>
                       </div>
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE_CLASSES[claim.status]}`}>
                         {t(`insurance.claim.status.${claim.status.toLowerCase()}`)}

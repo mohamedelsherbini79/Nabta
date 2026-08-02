@@ -400,7 +400,10 @@ export type InsurancePolicyInput = z.infer<typeof insurancePolicySchema>;
 
 export const insuranceClaimSchema = z.object({
   description: z.string().trim().min(1).max(300),
-  amount: z.coerce.number().min(0).max(10_000_000),
+  // min(0.01), not 0 — a $0 claim isn't meaningful, and this also closes a
+  // gap where z.coerce.number() silently turns null/"" into 0 instead of
+  // rejecting them, letting a malformed direct API call through as valid.
+  amount: z.coerce.number().min(0.01).max(10_000_000),
 });
 export type InsuranceClaimInput = z.infer<typeof insuranceClaimSchema>;
 

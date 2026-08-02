@@ -13,7 +13,6 @@ export interface PregnancyProgress {
   trimester: 1 | 2 | 3;
   daysPregnant: number;
   daysUntilDue: number;
-  dueDate: string;
   babySize: string;
   tip: string;
 }
@@ -97,7 +96,7 @@ export function getWeeklyInfo(week: number): { babySize: string; tip: string } {
 export function computePregnancyProgress(lastPeriodDate: Date, today: Date = new Date()): PregnancyProgress {
   const daysPregnant = Math.max(0, Math.floor((today.getTime() - lastPeriodDate.getTime()) / MS_PER_DAY));
   const currentWeek = Math.min(Math.floor(daysPregnant / 7) + 1, MAX_WEEK);
-  const currentDay = daysPregnant % 7;
+  const currentDay = (daysPregnant % 7) + 1; // 1-7, matching currentWeek's 1-based numbering
   const trimester: 1 | 2 | 3 = currentWeek <= 13 ? 1 : currentWeek <= 27 ? 2 : 3;
   const dueDate = computeDueDate(lastPeriodDate);
   const daysUntilDue = Math.max(0, Math.round((dueDate.getTime() - today.getTime()) / MS_PER_DAY));
@@ -109,7 +108,6 @@ export function computePregnancyProgress(lastPeriodDate: Date, today: Date = new
     trimester,
     daysPregnant,
     daysUntilDue,
-    dueDate: dueDate.toISOString(),
     babySize: info.babySize,
     tip: info.tip,
   };

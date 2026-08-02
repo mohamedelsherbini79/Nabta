@@ -49,15 +49,3 @@ export function toMoodEntrySummary(entry: MoodEntryRow): MoodEntrySummary {
     loggedAt: entry.loggedAt.toISOString(),
   };
 }
-
-const MOOD_SCORES: Record<string, number> = {
-  TERRIBLE: 1,
-  BAD: 2,
-  NEUTRAL: 3,
-  GOOD: 4,
-  EXCELLENT: 5,
-};
-
-export function moodScore(mood: string): number {
-  return MOOD_SCORES[mood] ?? 3;
-}

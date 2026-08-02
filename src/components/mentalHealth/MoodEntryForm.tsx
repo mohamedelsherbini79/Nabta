@@ -7,15 +7,8 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import { MOOD_OPTIONS } from "@/lib/moodConstants";
 import type { MoodLevel } from "@/types";
-
-const MOOD_OPTIONS: { value: MoodLevel; emoji: string }[] = [
-  { value: "TERRIBLE", emoji: "😞" },
-  { value: "BAD", emoji: "🙁" },
-  { value: "NEUTRAL", emoji: "😐" },
-  { value: "GOOD", emoji: "🙂" },
-  { value: "EXCELLENT", emoji: "😄" },
-];
 
 export function MoodEntryForm({ patientProfileId }: { patientProfileId: string }) {
   const { t } = useTranslation();

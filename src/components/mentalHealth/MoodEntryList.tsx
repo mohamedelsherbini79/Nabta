@@ -4,15 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/useTranslation";
 import { Button } from "@/components/ui/Button";
+import { MOOD_EMOJI } from "@/lib/moodConstants";
 import type { MoodEntrySummary } from "@/types";
-
-const MOOD_EMOJI: Record<string, string> = {
-  TERRIBLE: "😞",
-  BAD: "🙁",
-  NEUTRAL: "😐",
-  GOOD: "🙂",
-  EXCELLENT: "😄",
-};
 
 export function MoodEntryList({ entries }: { entries: MoodEntrySummary[] }) {
   const { t, locale } = useTranslation();

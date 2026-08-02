@@ -1,24 +1,13 @@
 "use client";
 
 import { useTranslation } from "@/i18n/useTranslation";
+import { moodScore } from "@/lib/moodConstants";
 import type { MoodEntrySummary } from "@/types";
 
 const WIDTH = 600;
 const HEIGHT = 180;
 const PADDING = { top: 10, right: 12, bottom: 20, left: 28 };
 const GRID_VALUES = [1, 2, 3, 4, 5];
-
-const MOOD_SCORES: Record<string, number> = {
-  TERRIBLE: 1,
-  BAD: 2,
-  NEUTRAL: 3,
-  GOOD: 4,
-  EXCELLENT: 5,
-};
-
-function moodScore(mood: string): number {
-  return MOOD_SCORES[mood] ?? 3;
-}
 
 function scaleY(score: number): number {
   const ratio = (score - 1) / 4;
